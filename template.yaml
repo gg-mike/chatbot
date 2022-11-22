@@ -1,0 +1,133 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Stage:
+    Type: String
+    Description: The name for a project pipeline stage, such as Staging or Prod, for which resources are provisioned and deployed.
+    Default: 'Prod'
+
+Globals:
+  Function:
+    Runtime: python3.9
+    Handler: index.handler
+    Timeout: 3
+
+Resources:
+
+  # ============================================================
+  # IAM
+  # ============================================================
+
+  ApiAuthInvokeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: [ "apigateway.amazonaws.com" ]
+            Action: [ sts:AssumeRole ]
+      Policies:
+        - PolicyName: "InvokeAuthorizerFunc"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - lambda:InvokeAsync
+                  - lambda:InvokeFunction
+                Resource: !GetAtt AuthorizerFunc.Arn
+
+  # ============================================================
+  # API GATEWAY
+  # ============================================================
+
+  ChatbotApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: !Ref Stage
+      Auth:
+        DefaultAuthorizer: LambdaRequestAuthorizer
+        Authorizers:
+          LambdaRequestAuthorizer:
+            FunctionArn: !GetAtt AuthorizerFunc.Arn
+            FunctionInvokeRole: !GetAtt ApiAuthInvokeRole.Arn
+            Identity:
+              Headers:
+                - Authorization
+              ReauthorizeEvery: 0
+            AuthorizerPayloadFormatVersion: 2.0
+            EnableSimpleResponses: true
+
+  # ============================================================
+  # LAMBDA
+  # ============================================================
+
+  # Authorizers
+
+  AuthorizerFunc:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: gen/auth
+
+  # Utils
+
+  HelloApi:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: gen/hello
+      Events:
+        GetEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ChatbotApi
+            Path: /hello
+            Method: any
+            Auth:
+              Authorizer: NONE
+
+  # Events
+
+  EventDelete:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+      CodeUri: gen/events/delete
+      Events:
+        GetEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ChatbotApi
+            Path: /events
+            Method: delete
+
+  EventGet:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: gen/events/get/
+      Events:
+        GetEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ChatbotApi
+            Path: /events
+            Method: get
+
+  EventPost:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: gen/events/post/
+      Events:
+        GetEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ChatbotApi
+            Path: /events
+            Method: post
+
+Outputs:
+  ChatbotApi:
+    Description: "Chatbot API (endpoint for ensuring API is operational)"
+    Value: !Sub "https://${ChatbotApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello"

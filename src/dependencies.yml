@@ -1,0 +1,9 @@
+globals: 
+  _dep:
+    - simple_response.py
+  _req:
+    - requests
+
+lambda:
+  _dep: []
+  _req: []

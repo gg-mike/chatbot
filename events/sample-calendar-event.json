@@ -1,0 +1,19 @@
+{
+  "body": {
+    "calendar-name": "Chatbot",
+    "calendar-event": {
+      "summary": "Chatbot event",
+      "location": "Poznań",
+      "description": "This is the event created by chatbot",
+      "start": {
+          "dateTime": "2022-11-22T10:00:00",
+          "timeZone": "Europe/Warsaw"
+      },
+      "end": {
+          "dateTime": "2022-11-22T12:00:00",
+          "timeZone": "Europe/Warsaw"
+      },
+      "colorId": 1
+    }
+  }
+}
