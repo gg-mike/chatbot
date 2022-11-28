@@ -1,9 +1,15 @@
 globals: 
   _dep:
-    - simple_response.py
+    - utility.py
   _req:
     - requests
 
 lambda:
-  _dep: []
-  _req: []
+  events:
+    _req:
+      - google-api-python-client
+      - google-auth
+      - pytz
+    _dep:
+      - googleapi
+      - utility.py

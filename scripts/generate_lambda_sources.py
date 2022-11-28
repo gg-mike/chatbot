@@ -1,6 +1,6 @@
 from glob import glob
 from os import makedirs, path
-from shutil import copy, rmtree
+from shutil import copy, copytree, rmtree
 from yaml import load, FullLoader
 
 
@@ -28,7 +28,8 @@ def load_dependencies():
 def load_common_files():
     global common_files
     common_files = [
-        common_filepath.split("/")[-1] for common_filepath in glob(f"{src_dir}/common/*.py")
+        "/".join(common_filepath.split("/")[2:])
+        for common_filepath in glob(f"{src_dir}/common/**/*.py", recursive=True)
     ]
 
 
@@ -66,10 +67,22 @@ def generate_lambda_src():
             req_file.write("\n".join(reqs))
 
         for dep in deps:
+            # module
+            if ".py" not in dep:
+                dep = dep.replace(".", "/")
+                copytree(f"{src_dir}/common/{dep}", f"{new_dir}/{dep}")
+                continue
+
             if dep not in common_files:
                 raise InvalidCommonFileException(
                     f"File '{file}' requires common file '{dep}', but it wasn't found in 'src/common' folder"
                 )
+            dep_dir = "/".join(dep.split("/")[:-1])
+
+            # nested file
+            if dep_dir:
+                makedirs(f"{new_dir}/{dep_dir}", exist_ok=True)
+
             copy(f"{src_dir}/common/{dep}", f"{new_dir}/{dep}")
 
 

@@ -1,0 +1,16 @@
+{
+  "headers": {
+      "Debug": true,
+      "Authorization": "Bearer <token>"
+  },
+  "userId": "John",
+  "currentIntent": {
+    "name": "CreateEvent",
+    "slots": {
+      "EventName": "Test event",
+      "Location": "Poznan",
+      "StartDate": "2022-12-06",
+      "EndDate": "2022-12-06"
+    }
+  }
+}
