@@ -1,16 +1,16 @@
-from .utils import get_items
+from googleapi.utils import get_items
 
 
-def create(service, name: str, mod: str = "a"):
+def create(service, name: str, append: bool = True):
     calendars = get_all(service)
     body = {"summary": name}
 
-    if mod == "a" and name not in calendars:
-        return service.calendars().insert(body=body).execute()["id"]
-    elif mod in ["n", "o"]:
-        if mod == "o":
+    if name in calendars:
+        if append:
+            return calendars[name]["id"]
+        else:
             delete(service, name)
-        return service.calendars().insert(body=body).execute()["id"]
+    return service.calendars().insert(body=body).execute()["id"]
 
 
 def get_all(service):
@@ -22,7 +22,7 @@ def get(service, name: str, create_if_not_exists: bool = True):
     if name in calendars:
         return calendars[name]["id"]
     if create_if_not_exists:
-        return create(service, name, "n")
+        return create(service, name)
     return None
 
 

@@ -1,5 +1,5 @@
 from datetime import datetime
-from json import dumps
+from json import dumps, loads
 
 
 def get_access_token(headers: dict) -> tuple:
@@ -21,8 +21,12 @@ def get_slots(event: dict) -> dict:
     if "currentIntent" in event:
         if "slots" in event["currentIntent"]:
             return event["currentIntent"]["slots"]
-    if "slots" in event["body"]:
-        return event["body"]["slots"]
+
+    if "body" in event:
+        if event["body"]:
+            event["body"] = loads(event["body"])
+            if "slots" in event["body"]:
+                return event["body"]["slots"]
 
     return {}
 

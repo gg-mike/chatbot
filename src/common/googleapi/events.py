@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from pytz import timezone
 
-from .utils import get_items
+from googleapi.utils import get_items
 
 
 def create(service, calendar_id: str, event: dict):
@@ -10,8 +10,8 @@ def create(service, calendar_id: str, event: dict):
 
 def get_datetime(date_str: str, dt_time: datetime.time) -> str:
     dt_tz = timezone("Europe/Warsaw")
-    dt = datetime.combine(date.fromisoformat(date_str))
-    return str(dt_tz.localize(dt, dt_time)).replace(" ", "T")
+    dt = datetime.combine(date.fromisoformat(date_str), dt_time)
+    return str(dt_tz.localize(dt)).replace(" ", "T")
 
 
 def get(service, calendar_id: str, date_min: str = None, date_max: str = None):
