@@ -1,8 +1,8 @@
-import simple_response
+import utility
 
 
 def handler(event, context):
-    return simple_response.generate(
+    return utility.simple_response(
         {
             "info": "Hello from Serverless chatbot API",
             "request-body": event["body"] if "body" in event else "",

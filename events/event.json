@@ -18,7 +18,7 @@
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
     "Accept-Encoding": "gzip, deflate, sdch",
     "Accept-Language": "en-US,en;q=0.8",
-    "Authorization": "Bearer ya29.a0AeTM1ifFPzk6CxUJa8LNtqmZ-1oSmc3V4UE20lZ6_u2AZXSpkBw2YaOJhXbk-yv7dLL_oL84zoswlh5RkvaRWcMowbQZNT47aqupQ576vg5FAeZcI6atXUqpE4Ca_KEmk00FWODMwk7pO30QF8cjyPDTar7qaCgYKARQSARISFQHWtWOm0Mfsy2jdjJyZdkuHWrVfjw0163",
+    "Authorization": "Bearer <token>",
     "Cache-Control": "max-age=0",
     "CloudFront-Forwarded-Proto": "https",
     "CloudFront-Is-Desktop-Viewer": "true",

@@ -11,7 +11,7 @@ Globals:
   Function:
     Runtime: python3.9
     Handler: index.handler
-    Timeout: 3
+    Timeout: 10
 
 Resources:
 
@@ -89,19 +89,6 @@ Resources:
               Authorizer: NONE
 
   # Events
-
-  EventDelete:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName:
-      CodeUri: gen/events/delete
-      Events:
-        GetEvent:
-          Type: HttpApi
-          Properties:
-            ApiId: !Ref ChatbotApi
-            Path: /events
-            Method: delete
 
   EventGet:
     Type: AWS::Serverless::Function
