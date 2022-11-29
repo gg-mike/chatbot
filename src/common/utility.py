@@ -1,8 +1,33 @@
 from datetime import datetime
+from dateutil.parser import parse
 from json import dumps, loads
+from logging import getLogger, Logger, DEBUG
+
+
+def create_debug_logger() -> Logger:
+    """Create debug logger.
+
+    Returns:
+        Logger: debug root logger
+    """
+    logger = getLogger()
+    logger.setLevel(DEBUG)
+    return logger
 
 
 def get_access_token(headers: dict) -> tuple:
+    """Extract authorization token from event's header.
+
+    If at any point of extraction occurs error, the error message will be sent back to the user
+    and the token will be set to None.
+
+    Args:
+        headers (dict): header of the request
+
+    Returns:
+        tuple: extracted token and error message (if extraction was successful it is set to None)
+
+    """
     token_locations = ["Authorization", "authorization", "auth"]
     token = None
     err = f"Authorization key missing (use one of this keys: {', '.join(token_locations)})"
@@ -18,6 +43,14 @@ def get_access_token(headers: dict) -> tuple:
 
 
 def get_slots(event: dict) -> dict:
+    """Extract slots from the request.
+
+    Args:
+        event (dict): request (from Lex or API Gateway)
+
+    Returns:
+        dict: slots extracted from Lex request or API request or empty dictionary
+    """
     if "currentIntent" in event:
         if "slots" in event["currentIntent"]:
             return event["currentIntent"]["slots"]
@@ -31,53 +64,34 @@ def get_slots(event: dict) -> dict:
     return {}
 
 
-def value_guard(value: str, allowed_values: set, fallback: str) -> str:
-    return value if value in allowed_values else fallback
+def simple_response(output) -> dict:
+    """Creates simple response for Lambda.
 
+    Args:
+        output: JSON serializable data
 
-def lex_response(action_type: str, fulfillment_state: str, content_type: str, content):
+    Returns:
+        dict: response with timestamp
     """
-    Response for Lambda formatted for Lex.
-    See [AWS Documentation](https://docs.aws.amazon.com/lex/latest/dg/API_runtime_DialogAction.html) for more information.
-
-    Action type, fulfillment state and content type are check if they contain allowed values.
-    In the case where given value does not matched allowed values it is set to its fallback.
-
-    Fallback:
-    Action type: `Close`
-    Fulfillment state: `Failed`
-    Content type: `PlainText`
-    """
-
-    ALLOWED_ACTION_TYPES = {"ElicitIntent", "ConfirmIntent", "ElicitSlot", "Close", "Delegate"}
-    ALLOWED_FULFILLMENT_STATE = {"Fulfilled", "Failed", "ReadyForFulfillment"}
-    ALLOWED_CONTENT_TYPE = {"PlainText", "CustomPayload", "SSML", "Composite"}
-
-    return {
-        "dialogAction": {
-            "type": value_guard(action_type, ALLOWED_ACTION_TYPES, "Close"),
-            "fulfillmentState": value_guard(fulfillment_state, ALLOWED_FULFILLMENT_STATE, "Failed"),
-            "message": {
-                "contentType": value_guard(content_type, ALLOWED_CONTENT_TYPE, "PlainText"),
-                "content": content,
-            },
-        }
-    }
-
-
-def error_lex_response(message) -> dict:
-    return lex_response(
-        "Close",
-        "Fulfilled",
-        "PlainText",
-        message,
-    )
-
-
-def simple_response(output):
     data = {"output": output, "timestamp": datetime.utcnow().isoformat()}
     return {
         "statusCode": 200,
         "body": dumps(data),
         "headers": {"Content-Type": "application/json"},
     }
+
+
+def isvalid_date(date: str) -> bool:
+    """Checks if provided date is correctly formatted
+
+    Args:
+        date (str): string containing date.
+
+    Returns:
+        bool: True if date is correctly formatted, False otherwise.
+    """
+    try:
+        parse(date)
+        return True
+    except ValueError:
+        return False

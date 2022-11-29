@@ -1,5 +1,7 @@
-from googleapi import calendars, events, utils
-import utility
+from googleapi import calendars, events
+from lex import close, return_unexpected_failure
+from setup_handler import google_api_handler as setup
+from utility import get_slots
 
 
 def create_event_body(data):
@@ -33,25 +35,22 @@ def create_event_body(data):
     return body
 
 
-def handler(event, context):
-    token, err = utility.get_access_token(event["headers"])
+def handler(event: dict, context: object) -> dict:
+    session_attributes, token, service, err = utils.setup(event, "calendar", "v3")
     if err is not None:
-        return utility.error_lex_response(f"Bad Request: {err}")
-
-    service, err = utils.create_service(token, "calendar", "v3")
-    if err is not None:
-        return utility.error_lex_response(f"Could not create Google Service ({err})")
+        return return_unexpected_failure(session_attributes, err)
 
     calendar_id = calendars.get(service, "Chatbot")
-    slots = utility.get_slots(event)
+    slots = get_slots(event)
 
     try:
         events.create(service, calendar_id, create_event_body(slots))
-        return utility.lex_response(
-            "Close",
+        return close(
+            session_attributes,
             "Fulfilled",
-            "PlainText",
-            f"Created event '{slots['EventName']}'",
+            {"contentType": "PlainText", "content": f"Created event '{slots['EventName']}'"},
         )
     except Exception as err:
-        return utility.error_lex_response(f"Failed to create event '{slots['EventName']}'")
+        return return_unexpected_failure(
+            session_attributes, f"Failed to create event '{slots['EventName']}'"
+        )

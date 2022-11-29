@@ -5,6 +5,12 @@ globals:
     - requests
 
 lambda:
+  cultural_events:
+    _req:
+      - boto3
+      - unidecode
+    _dep:
+      - lex.py
   events:
     _req:
       - google-api-python-client
@@ -12,4 +18,12 @@ lambda:
       - pytz
     _dep:
       - googleapi
-      - utility.py
+      - lex.py
+      - setup_handler.py
+  weather:
+    _req:
+      - boto3
+      - geopy
+    _dep:
+      - lex.py
+

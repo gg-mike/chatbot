@@ -88,6 +88,24 @@ Resources:
             Auth:
               Authorizer: NONE
 
+  # Cultural events
+
+  CulturalEvents:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: gen/cultural_events
+      Policies:
+        - SecretsManagerReadWrite
+      Events:
+        GetEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ChatbotApi
+            Path: /cultural_events
+            Method: get
+            Auth:
+              Authorizer: NONE
+
   # Events
 
   EventGet:
@@ -113,6 +131,24 @@ Resources:
             ApiId: !Ref ChatbotApi
             Path: /events
             Method: post
+
+  # Weather
+
+  Weather:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: gen/weather
+      Policies:
+        - AmazonDynamoDBFullAccess
+      Events:
+        GetEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ChatbotApi
+            Path: /weather
+            Method: get
+            Auth:
+              Authorizer: NONE
 
 Outputs:
   ChatbotApi:
