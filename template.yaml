@@ -78,6 +78,8 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: gen/core
+      Policies:
+        - AmazonLexFullAccess
       Events:
         AnyEvent:
           Type: HttpApi
