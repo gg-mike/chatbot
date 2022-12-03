@@ -86,12 +86,12 @@ Resources:
             Path: /core
             Method: any
 
-  HelloApi:
+  HelloFunc:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: gen/hello
       Events:
-        GetEvent:
+        AnyEvent:
           Type: HttpApi
           Properties:
             ApiId: !Ref ChatbotApi
@@ -102,7 +102,7 @@ Resources:
 
   # Cultural events
 
-  CulturalEvents:
+  CulturalEventsFunc:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: gen/cultural_events
@@ -120,10 +120,10 @@ Resources:
 
   # Events
 
-  EventGet:
+  EventGetFunc:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: gen/events/get/
+      CodeUri: gen/events/get
       Events:
         GetEvent:
           Type: HttpApi
@@ -132,12 +132,12 @@ Resources:
             Path: /events
             Method: get
 
-  EventPost:
+  EventPostFunc:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: gen/events/post/
+      CodeUri: gen/events/post
       Events:
-        GetEvent:
+        PostEvent:
           Type: HttpApi
           Properties:
             ApiId: !Ref ChatbotApi
@@ -160,7 +160,7 @@ Resources:
 
   # Weather
 
-  Weather:
+  WeatherFunc:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: gen/weather

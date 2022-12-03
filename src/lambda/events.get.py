@@ -5,7 +5,7 @@ from utility import get_slots
 
 
 def handler(event: dict, context: object) -> dict:
-    session_attributes, token, service, err = setup(event, "calendar", "v3")
+    session_attributes, service, err = setup(event, "calendar", "v3")
     if err is not None:
         return return_unexpected_failure(session_attributes, err)
 

@@ -36,7 +36,7 @@ def create_event_body(data):
 
 
 def handler(event: dict, context: object) -> dict:
-    session_attributes, token, service, err = utils.setup(event, "calendar", "v3")
+    session_attributes, service, err = setup(event, "calendar", "v3")
     if err is not None:
         return return_unexpected_failure(session_attributes, err)
 

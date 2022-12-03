@@ -11,8 +11,7 @@ def google_api_handler(event: dict, service_name: str, version: str) -> tuple:
         version (str): version of service
 
     Returns:
-        tuple: access token, google service, session attributes and
-            error message (None if no error occurred)
+        tuple: session attributes, google service and error message (None if no error occurred)
     """
 
     session_attributes = event["session_attributes"] if "session_attributes" in event else {}
