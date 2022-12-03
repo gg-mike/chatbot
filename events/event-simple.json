@@ -1,0 +1,7 @@
+{
+  "body": "{\"lex_args\": \"hello api\"}",
+  "routeArn": "placeholder",
+  "headers": {
+    "Authorization": "Bearer <token>"
+  }
+}

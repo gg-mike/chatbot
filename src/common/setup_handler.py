@@ -19,10 +19,10 @@ def google_api_handler(event: dict, service_name: str, version: str) -> tuple:
 
     token, err = get_access_token(event["headers"])
     if err is not None:
-        return session_attributes, None, None, f"Bad Request: {err}"
+        return session_attributes, None, f"Bad Request: {err}"
 
     service, err = create_service(token, service_name, version)
     if err is not None:
-        return session_attributes, token, None, f"Could not create Google Service ({err})"
+        return session_attributes, None, f"Could not create Google Service ({err})"
 
-    return session_attributes, token, service, None
+    return session_attributes, service, None

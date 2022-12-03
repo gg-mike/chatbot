@@ -5,6 +5,9 @@ globals:
     - requests
 
 lambda:
+  core:
+    _req:
+      - boto3
   cultural_events:
     _req:
       - boto3
@@ -16,6 +19,14 @@ lambda:
       - google-api-python-client
       - google-auth
       - pytz
+    _dep:
+      - googleapi
+      - lex.py
+      - setup_handler.py
+  tasks:
+    _req:
+      - google-api-python-client
+      - google-auth
     _dep:
       - googleapi
       - lex.py

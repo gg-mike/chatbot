@@ -74,6 +74,18 @@ Resources:
 
   # Utils
 
+  CoreFunc:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: gen/core
+      Events:
+        AnyEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ChatbotApi
+            Path: /core
+            Method: any
+
   HelloApi:
     Type: AWS::Serverless::Function
     Properties:
@@ -130,6 +142,20 @@ Resources:
           Properties:
             ApiId: !Ref ChatbotApi
             Path: /events
+            Method: post
+
+  # Tasks
+
+  TaskPostFunc:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: gen/tasks/post/
+      Events:
+        PostEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ChatbotApi
+            Path: /tasks
             Method: post
 
   # Weather
