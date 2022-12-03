@@ -16,7 +16,16 @@ def google_api_handler(event: dict, service_name: str, version: str) -> tuple:
 
     session_attributes = event["session_attributes"] if "session_attributes" in event else {}
 
-    token, err = get_access_token(event["headers"])
+    auth_locations = ["requestAttributes", "headers"]
+    token = None
+    err = f"Token location key missing (use one of this keys: {', '.join(auth_locations)})"
+
+    for location in auth_locations:
+        if location in event:
+            token, err = get_access_token(event[location])
+            if err is None:
+                break
+
     if err is not None:
         return session_attributes, None, f"Bad Request: {err}"
 

@@ -28,7 +28,7 @@ def get_access_token(headers: dict) -> tuple:
         tuple: extracted token and error message (if extraction was successful it is set to None)
 
     """
-    token_locations = ["Authorization", "authorization", "auth"]
+    token_locations = ["access_token", "Authorization", "authorization", "auth"]
     token = None
     err = f"Authorization key missing (use one of this keys: {', '.join(token_locations)})"
 
