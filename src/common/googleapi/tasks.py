@@ -14,7 +14,7 @@ def get_task_list_id(service, task_list_name) -> str:
     return response["id"]
 
 
-def create(service, task_list_id: str, title: str, due_date: str, description: str):
+def create_task(service, task_list_id: str, title: str, due_date: str, description: str):
     task_body = {"title": title, "due": due_date + "T00:00:00.000Z", "notes": description}
     print(f"task_body={task_body}")
     response = service.tasks().insert(tasklist=task_list_id, body=task_body).execute()

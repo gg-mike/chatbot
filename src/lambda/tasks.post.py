@@ -15,14 +15,14 @@ def handler(event, context):
     if err is not None:
         return return_unexpected_failure(session_attributes, err)
 
-    task_list_id = tasks.get_task_list_id(service, CHATBOT_TASKS_LIST)
-
     slots = get_slots(event)
     logger.debug(f"{slots=}")
 
     try:
-        tasks.create(service, task_list_id, slots["Title"], slots["Deadline"], slots["Description"])
+        task_list_id = tasks.get_task_list_id(service, CHATBOT_TASKS_LIST)
+        tasks.create_task(service, task_list_id, slots["Title"], slots["Deadline"], slots["Description"])
         return close(
+            session_attributes,
             "Fulfilled",
             {"contentType": "PlainText", "content": f"Created task '{slots['Title']}'"},
         )
