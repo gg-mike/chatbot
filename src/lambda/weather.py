@@ -269,7 +269,7 @@ def dispatch(intent_request: dict) -> dict:
     if intent_name == "GetWeatherDate":
         return get_weather_forecast(intent_request)
 
-    elif intent_name == "GetWeatherToday":
+    elif intent_name == "GetWeatherNow":
         return get_weather_now(intent_request)
 
     raise Exception("Intent with name " + intent_name + " is not supported")
