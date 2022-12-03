@@ -168,6 +168,8 @@ Resources:
       CodeUri: gen/weather
       Policies:
         - AmazonDynamoDBFullAccess
+        - SecretsManagerReadWrite
+
       Events:
         GetEvent:
           Type: HttpApi

@@ -2,6 +2,7 @@ from datetime import datetime
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
 from geopy.geocoders import Nominatim
+from botocore.exceptions import ClientError
 import boto3
 import json
 import requests
@@ -81,9 +82,14 @@ def get_secret(secret_key: str) -> str:
     # Set up our Session and Client
     session = boto3.session.Session()
     client = session.client(service_name="secretsmanager", region_name=region_name)
-
-    # Calling SecretsManager
-    get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name
+        )
+    except ClientError as e:
+        # For a list of exceptions thrown, see
+        # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+        raise e
 
     # Extracting the key/value from the secret
     secret = get_secret_value_response["SecretString"]
