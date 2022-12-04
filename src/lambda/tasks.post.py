@@ -24,9 +24,9 @@ def handler(event, context):
         return close(
             session_attributes,
             "Fulfilled",
-            {"contentType": "PlainText", "content": f"Created task '{slots['Title']}'"},
+            {"contentType": "PlainText", "content": f"Created task {slots['Title']}"},
         )
     except Exception as err:
         return return_unexpected_failure(
-            session_attributes, f"Failed to create task '{slots['Title']}'"
+            session_attributes, f"Failed to create task {slots['Title']}"
         )
