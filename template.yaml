@@ -110,6 +110,8 @@ Resources:
       CodeUri: gen/cultural_events
       Policies:
         - SecretsManagerReadWrite
+        - AmazonDynamoDBFullAccess
+
       Events:
         GetEvent:
           Type: HttpApi
