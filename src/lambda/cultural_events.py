@@ -94,8 +94,8 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
 
         if items:
             response_message = ""
-            for count, item in enumerate(items):
-                response_message += f"{count+1}) Event name: {item['event_name']}\n "
+            for count, item in enumerate(items): 
+                response_message += f"{count+1}) Event name: {item.get('event_name','no title')}\n "
                 if item.get('time_start', None):
                     response_message += f"starts at {item['time_start']}\n "
                 if item.get('time_end', None):
