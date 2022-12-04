@@ -41,7 +41,7 @@ def validate_user_input(slots: dict) -> dict:
     return {"isValid": True}
 
 
-def get_cultural_events_by_date(intent_request: dict) -> dict:
+def get_cultural_events_by_city(intent_request: dict) -> dict:
     """Handles user request for future cultural event by specific date, city is optional
 
     Args:
@@ -51,72 +51,69 @@ def get_cultural_events_by_date(intent_request: dict) -> dict:
         dict: data to send to Lex
     """
 
-    source = intent_request["invocationSource"]
-    slots = intent_request["currentIntent"]["slots"]
+    source = intent_request['invocationSource']
+    slots = intent_request['currentIntent']['slots']
 
-    session_attributes = (
-        intent_request["sessionAttributes"]
-        if intent_request["sessionAttributes"] is not None
-        else {}
-    )
+    session_attributes = intent_request['sessionAttributes'] if intent_request['sessionAttributes'] is not None else {
+    }
 
-    logger.debug(f"source {source}")
-    logger.debug(f"slots {slots}")
+    logger.debug(f'source {source}')
+    logger.debug(f'slots {slots}')
 
-    if intent_request["invocationSource"] == "DialogCodeHook":
+    if intent_request['invocationSource'] == 'DialogCodeHook':
         # Validate any slots which have been specified.  If any are invalid, re-elicit for their value
-        validation_result = validate_user_input(intent_request["currentIntent"]["slots"])
-        if not validation_result["isValid"]:
-            slots = intent_request["currentIntent"]["slots"]
-            slots[validation_result["violatedSlot"]] = None
+        validation_result = validate_user_input(
+            intent_request['currentIntent']['slots'])
+        if not validation_result['isValid']:
+            slots = intent_request['currentIntent']['slots']
+            slots[validation_result['violatedSlot']] = None
 
             return elicit_slot(
                 session_attributes,
-                intent_request["currentIntent"]["name"],
+                intent_request['currentIntent']['name'],
                 slots,
-                validation_result["violatedSlot"],
-                validation_result["message"],
+                validation_result['violatedSlot'],
+                validation_result['message']
             )
         return delegate(session_attributes, slots)
 
-    if source == "FulfillmentCodeHook":
-        logger.debug("FulfillmentCodeHook activated")
+    if source == 'FulfillmentCodeHook':
+        logger.debug('FulfillmentCodeHook activated')
 
-        date = slots.get("Date", None)
-        city = slots.get("City", None)
+        date = slots.get('Date',None)
+        city = slots.get('City',None)
 
-        response = events_table.query(KeyConditionExpression=Key("start_date").eq(date))
-        items = response["Items"]
-        logger.debug(f"Items: {items}")
+        response = events_table.query(KeyConditionExpression=Key('location').eq((city)))
+        items = response['Items']
+        if date:
+            items = [item for item in items if item.get('date_start', None) == date]
+        
+        logger.debug(f'Items: {items}')
 
-        if city:
-            items = [
-                item
-                for item in items
-                if unidecode(item.get("location", "poznań")).lower() == city.lower()
-            ]
 
         if items:
             response_message = ""
             for count, item in enumerate(items):
                 response_message += f"{count+1}) Event name: {item['event_name']}\n "
-                if item.get("start_time", None):
-                    response_message += f"starts at: {item['start_time']}\n "
-                if item.get("end_time", None):
-                    response_message += f"ends at: {item['end_time']}\n "
-                if item.get("link", None):
+                if item.get('time_start', None):
+                    response_message += f"starts at {item['time_start']}\n "
+                if item.get('time_end', None):
+                    response_message += f"ends at {item['time_end']}\n "
+                if item.get('link', None):
                     response_message += f"read more: {item['link']}\n "
 
         else:
-            response_message = f"There are no ongoing events on {date}"
-            if city:
-                response_message += f" in {city}"
+            response_message = f"There are no ongoing events in {city}"
+            if date:
+                response_message += f" on {date}"
         return close(
             session_attributes,
-            "Fulfilled",
-            {"contentType": "PlainText", "content": response_message},
+            'Fulfilled',
+            {
+                'contentType': 'PlainText',
+                'content': response_message
+            }
         )
-
 
 def dispatch(intent_request: dict) -> dict:
     """Called when specifying an intent.
@@ -139,8 +136,8 @@ def dispatch(intent_request: dict) -> dict:
     intent_name = intent_request["currentIntent"]["name"]
 
     # Dispatch to your bot's intent handlers
-    if intent_name == "GetCulturalEventDate":
-        return get_cultural_events_by_date(intent_request)
+    if intent_name == "GetCulturalEventsCity":
+        return get_cultural_events_by_city(intent_request)
 
     raise Exception("Intent with name " + intent_name + " not supported")
 
@@ -149,3 +146,4 @@ def handler(event: dict, context: object) -> dict:
     """Route the incoming request based on intent. The JSON body of the request is provided in the event slot."""
     logger.debug("event.bot.name={}".format(event["bot"]["name"]))
     return dispatch(event)
+
