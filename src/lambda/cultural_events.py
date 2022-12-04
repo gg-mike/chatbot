@@ -11,7 +11,7 @@ from utility import create_debug_logger, isvalid_date
 logger = create_debug_logger()
 
 # connect to dynamoDB
-TABLE_NAME = "cultural_events"
+TABLE_NAME = "CulturalEvents"
 dynamodb_client = boto3.resource("dynamodb")
 events_table = dynamodb_client.Table(TABLE_NAME)
 
@@ -80,16 +80,17 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
     if source == 'FulfillmentCodeHook':
         logger.debug('FulfillmentCodeHook activated')
 
-        date = slots.get('Date',None)
-        city = slots.get('City',None)
+        date = slots.get('Date', None)
+        city = slots.get('City', None)
 
-        response = events_table.query(KeyConditionExpression=Key('location').eq((city)))
+        response = events_table.query(
+            KeyConditionExpression=Key('location').eq((city)))
         items = response['Items']
         if date:
-            items = [item for item in items if item.get('date_start', None) == date]
-        
-        logger.debug(f'Items: {items}')
+            items = [item for item in items if item.get(
+                'date_start', None) == date]
 
+        logger.debug(f'Items: {items}')
 
         if items:
             response_message = ""
@@ -114,6 +115,7 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
                 'content': response_message
             }
         )
+
 
 def dispatch(intent_request: dict) -> dict:
     """Called when specifying an intent.
@@ -146,4 +148,3 @@ def handler(event: dict, context: object) -> dict:
     """Route the incoming request based on intent. The JSON body of the request is provided in the event slot."""
     logger.debug("event.bot.name={}".format(event["bot"]["name"]))
     return dispatch(event)
-
