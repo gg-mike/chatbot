@@ -2,6 +2,11 @@ from googleapi.utils import get_items
 
 MAX_TASK_COUNT = 10
 CHATBOT_TASKS_LIST = "Chatbot"
+TIME_STRING = "T00:00:00.000Z"
+
+
+def get_datetime(date) -> str:
+    return date + TIME_STRING
 
 
 def get_task_lists_list(service):
@@ -9,12 +14,11 @@ def get_task_lists_list(service):
 
 
 def get_task_list(service, task_list_id: str, deadline_date: str):
-    deadline = deadline_date + "T00:00:00.000Z"
     return get_items(
         lambda page_token: service.tasks().list(
             pageToken=page_token,
             tasklist=task_list_id,
-            dueMax=deadline,
+            dueMax=get_datetime(deadline_date),
             maxResults=MAX_TASK_COUNT,
             showCompleted=True,
         )
@@ -32,7 +36,7 @@ def get_task_list_id(service, task_list_name) -> str:
 
 def create_task(service, title: str, deadline_date: str, description: str):
     task_list_id = get_task_list_id(service, CHATBOT_TASKS_LIST)
-    task_body = {"title": title, "due": deadline_date + "T00:00:00.000Z", "notes": description}
+    task_body = {"title": title, "due": get_datetime(deadline_date), "notes": description}
     return service.tasks().insert(tasklist=task_list_id, body=task_body).execute()
 
 
