@@ -153,7 +153,7 @@ Resources:
   TaskPostFunc:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: gen/tasks/post/
+      CodeUri: gen/tasks/post
       Events:
         PostEvent:
           Type: HttpApi
@@ -161,6 +161,18 @@ Resources:
             ApiId: !Ref ChatbotApi
             Path: /tasks
             Method: post
+
+  TaskGetFunc:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: gen/tasks/get
+      Events:
+        PostEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ChatbotApi
+            Path: /tasks
+            Method: get
 
   # Weather
 
