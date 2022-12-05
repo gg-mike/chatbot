@@ -17,14 +17,12 @@ def handler(event, context):
     logger.debug(f"{slots=}")
 
     try:
-        response = tasks.create_task(
-            service, slots["Title"], slots["Deadline"], slots["Description"]
-        )
+        response = tasks.get_tasks(service, slots["Deadline"])
         logger.debug(f"{response=}")
         return close(
             session_attributes,
             "Fulfilled",
-            {"contentType": "PlainText", "content": f"Created task {slots['Title']}"},
+            {"contentType": "PlainText", "content": ", ".join(response.keys())},
         )
     except Exception as err:
         return return_unexpected_failure(
