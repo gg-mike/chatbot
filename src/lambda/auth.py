@@ -44,6 +44,7 @@ def isAuthorized(headers):
 
 
 def handler(event: dict, context: object) -> dict:
+    logger.debug(f"{event=}")
     response = {"isAuthorized": isAuthorized(event["headers"])}
     logger.debug(f"{response=}")
     return response
