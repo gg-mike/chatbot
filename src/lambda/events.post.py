@@ -29,9 +29,6 @@ def create_event_body(data):
     if data.get("Location") is not None:
         body["location"] = data["Location"]
 
-    if data.get("Description") is not None:
-        body["description"] = data["Description"]
-
     return body
 
 
@@ -48,9 +45,9 @@ def handler(event: dict, context: object) -> dict:
         return close(
             session_attributes,
             "Fulfilled",
-            {"contentType": "PlainText", "content": f"Created event '{slots['EventName']}'"},
+            {"contentType": "PlainText", "content": f"Created event \"{slots['EventName']}\""},
         )
     except Exception as err:
         return return_unexpected_failure(
-            session_attributes, f"Failed to create event '{slots['EventName']}'"
+            session_attributes, f"Failed to create event \"{slots['EventName']}\""
         )

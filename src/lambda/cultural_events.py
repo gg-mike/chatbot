@@ -51,56 +51,56 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
         dict: data to send to Lex
     """
 
-    source = intent_request['invocationSource']
-    slots = intent_request['currentIntent']['slots']
+    source = intent_request["invocationSource"]
+    slots = intent_request["currentIntent"]["slots"]
 
-    session_attributes = intent_request['sessionAttributes'] if intent_request['sessionAttributes'] is not None else {
-    }
+    session_attributes = (
+        intent_request["sessionAttributes"]
+        if intent_request["sessionAttributes"] is not None
+        else {}
+    )
 
-    logger.debug(f'source {source}')
-    logger.debug(f'slots {slots}')
+    logger.debug(f"source {source}")
+    logger.debug(f"slots {slots}")
 
-    if intent_request['invocationSource'] == 'DialogCodeHook':
+    if intent_request["invocationSource"] == "DialogCodeHook":
         # Validate any slots which have been specified.  If any are invalid, re-elicit for their value
-        validation_result = validate_user_input(
-            intent_request['currentIntent']['slots'])
-        if not validation_result['isValid']:
-            slots = intent_request['currentIntent']['slots']
-            slots[validation_result['violatedSlot']] = None
+        validation_result = validate_user_input(intent_request["currentIntent"]["slots"])
+        if not validation_result["isValid"]:
+            slots = intent_request["currentIntent"]["slots"]
+            slots[validation_result["violatedSlot"]] = None
 
             return elicit_slot(
                 session_attributes,
-                intent_request['currentIntent']['name'],
+                intent_request["currentIntent"]["name"],
                 slots,
-                validation_result['violatedSlot'],
-                validation_result['message']
+                validation_result["violatedSlot"],
+                validation_result["message"],
             )
         return delegate(session_attributes, slots)
 
-    if source == 'FulfillmentCodeHook':
-        logger.debug('FulfillmentCodeHook activated')
+    if source == "FulfillmentCodeHook":
+        logger.debug("FulfillmentCodeHook activated")
 
-        date = slots.get('Date', None)
-        city = slots.get('City', None)
+        date = slots.get("Date", None)
+        city = slots.get("City", None)
 
-        response = events_table.query(
-            KeyConditionExpression=Key('location').eq((city)))
-        items = response['Items']
+        response = events_table.query(KeyConditionExpression=Key("location").eq((city)))
+        items = response["Items"]
         if date:
-            items = [item for item in items if item.get(
-                'date_start', None) == date]
+            items = [item for item in items if item.get("date_start", None) == date]
 
-        logger.debug(f'Items: {items}')
+        logger.debug(f"Items: {items}")
 
         if items:
             response_message = ""
-            for count, item in enumerate(items): 
+            for count, item in enumerate(items):
                 response_message += f"{count+1}) Event name: {item.get('event_name','no title')}\n "
-                if item.get('time_start', None):
+                if item.get("time_start", None):
                     response_message += f"starts at {item['time_start']}\n "
-                if item.get('time_end', None):
+                if item.get("time_end", None):
                     response_message += f"ends at {item['time_end']}\n "
-                if item.get('link', None):
+                if item.get("link", None):
                     response_message += f"read more: {item['link']}\n "
 
         else:
@@ -109,11 +109,8 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
                 response_message += f" on {date}"
         return close(
             session_attributes,
-            'Fulfilled',
-            {
-                'contentType': 'PlainText',
-                'content': response_message
-            }
+            "Fulfilled",
+            {"contentType": "PlainText", "content": response_message},
         )
 
 

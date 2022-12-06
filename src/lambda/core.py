@@ -13,9 +13,7 @@ CHATBOT_ALIAS = "Chatbot"
 def create_lex_args(event):
     body = json.loads(event["body"])
     logger.debug(f"{body=}")
-    lex_args = {
-        "userId": body["userId"]
-    }
+    lex_args = {"userId": body["userId"]}
     if "accept" in body:
         lex_args["accept"] = body["accept"]
     if "inputText" in body:
@@ -33,10 +31,8 @@ def send_data_to_lex(token, lex_args):
     response = client.post_content(
         botName=CHATBOT_NAME,
         botAlias=CHATBOT_ALIAS,
-        requestAttributes={
-            "access_token": token
-        },
-        **lex_args
+        requestAttributes={"access_token": token},
+        **lex_args,
     )
     return response
 
