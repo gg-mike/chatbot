@@ -10,7 +10,7 @@ def prepare_response(response, deadline):
     if len(response) == 0:
         return f"No tasks found with deadline {deadline}"
     else:
-        task_name_list = [task['title'] for task in response]
+        task_name_list = [task["title"] for task in response]
         return f"Task list with deadline {deadline}:\n" + "\n".join(task_name_list)
 
 
@@ -33,6 +33,4 @@ def handler(event, context):
             {"contentType": "PlainText", "content": prepare_response(response, slots["Deadline"])},
         )
     except Exception as err:
-        return return_unexpected_failure(
-            session_attributes, "Failed to get task list"
-        )
+        return return_unexpected_failure(session_attributes, "Failed to get task list")
