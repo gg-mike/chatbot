@@ -11,7 +11,7 @@ def filter_dict(d: dict, allowed_keys: list) -> dict:
 
 def handler(event: dict, context: object) -> dict:
     logger.debug(f"{event=}")
-    
+
     session_attributes, service, err = setup(event, "calendar", "v3")
     if err is not None:
         return return_unexpected_failure(session_attributes, err)
@@ -41,7 +41,7 @@ def handler(event: dict, context: object) -> dict:
         return close(
             session_attributes,
             "Fulfilled",
-            {"contentType": "CustomPayload", "content": items},
+            {"contentType": "CustomPayload", "content": f"{items}"},
         )
     except Exception as err:
         return return_unexpected_failure(session_attributes, f"Failed to get events ({err})")
