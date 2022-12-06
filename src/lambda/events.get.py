@@ -5,6 +5,7 @@ from utility import create_debug_logger, get_slots
 
 logger = create_debug_logger()
 
+
 def filter_dict(d: dict, allowed_keys: list) -> dict:
     return {k: d[k] for k in set(allowed_keys).intersection(d.keys())}
 
@@ -26,7 +27,7 @@ def handler(event: dict, context: object) -> dict:
         )
         logger.debug(f"{t_min=}")
         logger.debug(f"{t_max=}")
-        
+
         if len(items) == 0:
             return close(
                 session_attributes,

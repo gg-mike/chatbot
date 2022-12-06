@@ -5,6 +5,7 @@ from utility import create_debug_logger, get_slots
 
 logger = create_debug_logger()
 
+
 def create_event_body(data):
     body = {
         "summary": data["EventName"],
@@ -35,7 +36,7 @@ def create_event_body(data):
 
 def handler(event: dict, context: object) -> dict:
     logger.debug(f"{event=}")
-    
+
     session_attributes, service, err = setup(event, "calendar", "v3")
     if err is not None:
         return return_unexpected_failure(session_attributes, err)

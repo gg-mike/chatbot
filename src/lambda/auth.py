@@ -27,7 +27,7 @@ def isAuthorized(headers):
     """Check if request is valid."""
 
     # Debug mode
-    if headers.get("Debug") is not None:
+    if headers.get("Debug") is not None or headers.get("debug") is not None:
         logger.warning("Debug mode enabled")
         return True
 
