@@ -139,11 +139,7 @@ def get_weather_forecast(intent_request: dict) -> dict:
     """
     source = intent_request["invocationSource"]
     slots = intent_request["currentIntent"]["slots"]
-    session_attributes = (
-        intent_request["sessionAttributes"]
-        if intent_request["sessionAttributes"] is not None
-        else dict()
-    )
+    session_attributes = intent_request.get(["sessionAttributes"],{})
 
     if intent_request["invocationSource"] == "DialogCodeHook":
         # Validate any slots which have been specified.  If any are invalid, re-elicit for their value
@@ -194,7 +190,7 @@ def get_weather_forecast(intent_request: dict) -> dict:
                 session_attributes, "Fulfilled", {"contentType": "PlainText", "content": response}
             )
         else:
-            return_unexpected_failure(session_attributes, "Someting went wrong, try again later.")
+            return return_unexpected_failure(session_attributes, "Someting went wrong, try again later.")
 
 
 def get_weather_now(intent_request: dict) -> dict:
@@ -211,9 +207,7 @@ def get_weather_now(intent_request: dict) -> dict:
     slots = intent_request["currentIntent"]["slots"]
 
     session_attributes = (
-        intent_request["sessionAttributes"]
-        if intent_request["sessionAttributes"] is not None
-        else {}
+        intent_request.get("sessionAttributes",{})
     )
 
     if intent_request["invocationSource"] == "DialogCodeHook":
@@ -251,7 +245,7 @@ def get_weather_now(intent_request: dict) -> dict:
                 session_attributes, "Fulfilled", {"contentType": "PlainText", "content": response}
             )
         else:
-            return_unexpected_failure(session_attributes, "Something went wrong, try again later.")
+            return return_unexpected_failure(session_attributes, "Something went wrong, try again later.")
 
 
 ### DISPATCH ###

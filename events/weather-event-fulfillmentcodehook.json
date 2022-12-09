@@ -1,0 +1,20 @@
+{
+    "headers": {
+        "Debug": true
+    },
+    "bot": {
+        "name": "getWeatherAndCulturalEvents",
+        "alias": "bot alias",
+        "version": "bot version"
+      },
+    "userId": "John",
+    "invocationSource": "FulfillmentCodeHook",
+    "currentIntent": {
+      "name": "GetWeatherNow",
+      "slots": {
+        "EventName": "Test event",
+        "City": "Poznań",
+        "Date": "2022-12-10"
+      }
+    }
+  }
