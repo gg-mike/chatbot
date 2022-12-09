@@ -1,7 +1,8 @@
 from boto3.dynamodb.conditions import Key
 from datetime import datetime
 from dateutil.parser import parse
-from unidecode import unidecode
+from dateutil.relativedelta import relativedelta
+
 import boto3
 
 from lex import elicit_slot, close, delegate, build_validation_result
@@ -51,14 +52,10 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
         dict: data to send to Lex
     """
 
-    source = intent_request["invocationSource"]
+    source = intent_request.get("invocationSource",None)
     slots = intent_request["currentIntent"]["slots"]
 
-    session_attributes = (
-        intent_request["sessionAttributes"]
-        if intent_request["sessionAttributes"] is not None
-        else {}
-    )
+    session_attributes = intent_request.get("sessionAttributes",{})
 
     logger.debug(f"source {source}")
     logger.debug(f"slots {slots}")
@@ -84,22 +81,28 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
 
         date = slots.get("Date", None)
         city = slots.get("City", None)
+        response_message = ""
 
         response = events_table.query(KeyConditionExpression=Key("location").eq((city)))
         items = response["Items"]
         if date:
             items = [item for item in items if item.get("date_start", None) == date]
+        else:
+            # get ongoing events for next week
+            response_message += "No date provided, getting events for next week"
+            items = [item for item in items if datetime.today() <= parse(item.get("date_start", datetime.today()))<=datetime.today()+relativedelta(days=7)]
+
+
 
         logger.debug(f"Items: {items}")
 
         if items:
-            response_message = ""
             for count, item in enumerate(items):
                 response_message += f"{count+1}) Event name: {item.get('event_name','no title')}\n "
                 if item.get("time_start", None):
-                    response_message += f"starts at {item['time_start']}\n "
+                    response_message += f"starts at {item.get('date_start','no date specified')} {item['time_start']}\n "
                 if item.get("time_end", None):
-                    response_message += f"ends at {item['time_end']}\n "
+                    response_message += f"ends at {item.get('date_end','no date specified')} {item['time_end']}\n "
                 if item.get("link", None):
                     response_message += f"read more: {item['link']}\n "
 
