@@ -37,4 +37,6 @@ lambda:
       - geopy
     _dep:
       - lex.py
+      - openweathermapAPI
+
 

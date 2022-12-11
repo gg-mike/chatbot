@@ -10,7 +10,7 @@
     "userId": "John",
     "invocationSource": "FulfillmentCodeHook",
     "currentIntent": {
-      "name": "GetWeatherNow",
+      "name": "GetWeatherDate",
       "slots": {
         "EventName": "Test event",
         "City": "Poznań",
