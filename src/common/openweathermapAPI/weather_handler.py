@@ -59,7 +59,7 @@ def get_weather_today(city: str):
         dict: weather data or None if error occurs
     """
 
-    API_KEY = get_secret("OPEN_WEATHER_MAP_API_KEY")
+    API_KEY = get_secret("OPENWEATHERMAP_API_KEY")
 
     url = BASE_URL_WEATHER_NOW + "q=" + city + "&appid=" + API_KEY + "&units=metric"
     open_weather_map_data = handle_weather_api_request(url)
