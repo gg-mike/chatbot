@@ -29,7 +29,7 @@ def get_weather_date(
     if not latitude and not longitude:
         return None
 
-    API_KEY = get_secret("OPEN_WEATHER_MAP_API_KEY")
+    API_KEY = get_secret("OPENWEATHERMAP_API_KEY")
     url = (
         BASE_URL_WEATHER_FORECAST
         + "lat="
