@@ -7,7 +7,9 @@ BASE_URL_WEATHER_NOW = "https://api.openweathermap.org/data/2.5/weather?"
 BASE_URL_WEATHER_FORECAST = "https://api.openweathermap.org/data/2.5/forecast?"
 
 
-def get_weather_date(date: str = None, city: str = None, latitude: float = None, longitude: float = None):
+def get_weather_date(
+    date: str = None, city: str = None, latitude: float = None, longitude: float = None
+):
     """get weather data basing on provided date
 
     Args:
@@ -54,7 +56,7 @@ def get_weather_today(city: str):
         city (str): city for forecast
 
     Returns:
-        dict: weather data or None if error occurs 
+        dict: weather data or None if error occurs
     """
 
     API_KEY = get_secret("OPEN_WEATHER_MAP_API_KEY")

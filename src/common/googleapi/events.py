@@ -25,9 +25,16 @@ def get(service, calendar_id: str, d_min: str = None, d_max: str = None):
     return (
         get_items(
             lambda page_token: service.events().list(
-                calendarId=calendar_id, pageToken=page_token, timeMax=t_max, timeMin=t_min
+                calendarId=calendar_id,
+                pageToken=page_token,
+                timeMax=t_max,
+                timeMin=t_min,
+                orderBy="startTime",
+                singleEvents=True,
+                maxResults=10,
             )
         ),
         t_min.split("T")[0],
         t_max.split("T")[0],
+        dt_min.date() == dt_now.date(),
     )

@@ -1,4 +1,5 @@
 from googleapi import calendars, events
+from json import dumps
 from lex import close, return_unexpected_failure
 from setup_handler import google_api_handler as setup
 from utility import create_debug_logger, get_slots
@@ -22,11 +23,9 @@ def handler(event: dict, context: object) -> dict:
     logger.debug(f"{slots=}")
 
     try:
-        items, t_min, t_max = events.get(
+        items, t_min, t_max, is_current_events = events.get(
             service, calendar_id, slots.get("StartDate"), slots.get("EndDate")
         )
-        logger.debug(f"{t_min=}")
-        logger.debug(f"{t_max=}")
 
         if len(items) == 0:
             return close(
@@ -39,10 +38,13 @@ def handler(event: dict, context: object) -> dict:
             )
 
         items = {k: filter_dict(v, ["location", "start", "end"]) for k, v in items.items()}
+        if is_current_events:
+            session_attributes["closestCurrentEvent"] = list(items.values())[0]
+
         return close(
             session_attributes,
             "Fulfilled",
-            {"contentType": "CustomPayload", "content": f"{items}"},
+            {"contentType": "CustomPayload", "content": dumps(items)},
         )
     except Exception as err:
         return return_unexpected_failure(session_attributes, f"Failed to get events ({err})")

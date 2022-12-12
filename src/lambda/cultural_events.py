@@ -52,10 +52,10 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
         dict: data to send to Lex
     """
 
-    source = intent_request.get("invocationSource",None)
+    source = intent_request.get("invocationSource", None)
     slots = intent_request["currentIntent"]["slots"]
 
-    session_attributes = intent_request.get("sessionAttributes",{})
+    session_attributes = intent_request.get("sessionAttributes", {})
 
     logger.debug(f"source {source}")
     logger.debug(f"slots {slots}")
@@ -90,9 +90,13 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
         else:
             # get ongoing events for next week
             response_message += "No date provided, getting events for next week"
-            items = [item for item in items if datetime.today() <= parse(item.get("date_start", datetime.today()))<=datetime.today()+relativedelta(days=7)]
-
-
+            items = [
+                item
+                for item in items
+                if datetime.today()
+                <= parse(item.get("date_start", datetime.today()))
+                <= datetime.today() + relativedelta(days=7)
+            ]
 
         logger.debug(f"Items: {items}")
 
@@ -102,7 +106,9 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
                 if item.get("time_start", None):
                     response_message += f"starts at {item.get('date_start','no date specified')} {item['time_start']}\n "
                 if item.get("time_end", None):
-                    response_message += f"ends at {item.get('date_end','no date specified')} {item['time_end']}\n "
+                    response_message += (
+                        f"ends at {item.get('date_end','no date specified')} {item['time_end']}\n "
+                    )
                 if item.get("link", None):
                     response_message += f"read more: {item['link']}\n "
 
