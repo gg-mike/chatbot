@@ -16,7 +16,7 @@ def get_secret(secret_key: str) -> str:
         str: value of secret
     """
     # Your secret's name and region
-    secret_name = "secrets/dev/openweathermapkey"
+    secret_name = "secrets/dev/openweathermapkey2"
     region_name = "eu-west-2"
 
     # Set up our Session and Client
