@@ -56,7 +56,6 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
     slots = intent_request["currentIntent"]["slots"]
 
     session_attributes = intent_request.get("sessionAttributes", {})
-
     logger.debug(f"source {source}")
     logger.debug(f"slots {slots}")
 
@@ -100,7 +99,7 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
 
         logger.debug(f"Items: {items}")
 
-        session_attributes["cultural_events"] = {}
+        #session_attributes["user_cultural_events"] = {}
         if items:
             for count, item in enumerate(items):
                 response_message += f"{count+1}) Event name: {item.get('event_name','no title')}\n "
@@ -112,7 +111,7 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
                     )
                 if item.get("link", None):
                     response_message += f"read more: {item['link']}\n "
-                session_attributes["cultural_events"][count + 1] = item
+                #session_attributes["user_cultural_events"][count + 1] = item
 
         else:
             response_message = f"There are no ongoing events in {city}"
@@ -121,6 +120,7 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
 
         logger.debug(f"items before close {items}")
         logger.debug(f"response message before close {response_message}")
+        logger.debug(f"session attributes {session_attributes}")
         return close(
             session_attributes,
             "Fulfilled",
