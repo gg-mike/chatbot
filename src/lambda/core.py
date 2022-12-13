@@ -8,12 +8,18 @@ logger = create_debug_logger()
 
 CHATBOT_NAME = "Chatbot"
 CHATBOT_ALIAS = "Chatbot"
+CHATBOT_SERVICE = "lex-runtime"
+CHATBOT_REGION = "eu-west-2"
 
 
-def create_lex_args(event):
-    body = json.loads(event["body"])
+def create_lex_args(body, token):
     logger.debug(f"{body=}")
-    lex_args = {"userId": body["userId"]}
+    lex_args = {
+        "botName": CHATBOT_NAME,
+        "botAlias": CHATBOT_ALIAS,
+        "requestAttributes": {"access_token": token},
+        "userId": body["userId"]
+    }
     if "accept" in body:
         lex_args["accept"] = body["accept"]
     if "inputText" in body:
@@ -22,19 +28,8 @@ def create_lex_args(event):
     elif "inputAudio" in body:
         lex_args["contentType"] = body["inputAudio"]["contentType"]
         lex_args["inputStream"] = base64.b64decode(body["inputAudio"]["base64Audio"])
-    return lex_args
-
-
-def send_data_to_lex(token, lex_args):
     logger.debug(f"{lex_args=}")
-    client = boto3.client("lex-runtime", region_name="eu-west-2")
-    response = client.post_content(
-        botName=CHATBOT_NAME,
-        botAlias=CHATBOT_ALIAS,
-        requestAttributes={"access_token": token},
-        **lex_args,
-    )
-    return response
+    return lex_args
 
 
 def prepare_response(response):
@@ -54,8 +49,10 @@ def handler(event, context):
     logger.debug(f"{token=}")
 
     try:
-        lex_args = create_lex_args(event)
-        response = send_data_to_lex(token, lex_args)
+        body = json.loads(event["body"])
+        lex_args = create_lex_args(body, token)
+        client = boto3.client(CHATBOT_SERVICE, region_name=CHATBOT_REGION)
+        response = client.post_content(**lex_args)
     except Exception as err:
         return {"statusCode": 400}
 
