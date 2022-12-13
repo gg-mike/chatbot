@@ -165,7 +165,7 @@ def add_cultural_event_to_calendar(intent_request: dict) -> dict:
         logger.debug(f"session attributes {session_attributes}")
         cultural_event_index = int(slots.get("CulturalEventIndex", None))
         cultural_event_json = session_attributes.get(
-            f"cultural_event{cultural_event_index}", None)
+            f"cultural_event_{cultural_event_index}", None)
         if not cultural_event_json:
             return close(
                 session_attributes,
