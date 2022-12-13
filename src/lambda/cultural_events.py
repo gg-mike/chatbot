@@ -103,7 +103,7 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
 
         logger.debug(f"Items: {items}")
 
-        session_attributes['cultural_events'] = []
+        # session_attributes['cultural_events'] = []
         if items:
             for count, item in enumerate(items):
                 response_message += f"{count+1}) Event name: {item.get('event_name','no title')}\n "
@@ -115,13 +115,15 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
                     )
                 if item.get("link", None):
                     response_message += f"read more: {item['link']}\n "
-                session_attributes['cultural_events'].append(
-                    {'index': count, 'item': item})
+                #session_attributes['cultural_events'].append({'index': count, 'item': item})
 
         else:
             response_message = f"There are no ongoing events in {city}"
             if date:
                 response_message += f" on {date}"
+        
+        logger.debug('items before close', items)
+        logger.debug('response message before close', response_message)
         return close(
             session_attributes,
             "Fulfilled",
@@ -167,3 +169,6 @@ def handler(event: dict, context: object) -> dict:
     """Route the incoming request based on intent. The JSON body of the request is provided in the event slot."""
     logger.debug("event.bot.name={}".format(event["bot"]["name"]))
     return dispatch(event)
+
+
+NIE DZIAŁĄ GÓŒNO JEBANE POPRAW ZNAJDX DLASCZEGO I SPRAWDZ sessionAttributes
