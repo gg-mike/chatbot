@@ -103,7 +103,7 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
 
         logger.debug(f"Items: {items}")
 
-        # session_attributes['cultural_events'] = []
+        session_attributes['cultural_events'] = {}
         if items:
             for count, item in enumerate(items):
                 response_message += f"{count+1}) Event name: {item.get('event_name','no title')}\n "
@@ -115,13 +115,13 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
                     )
                 if item.get("link", None):
                     response_message += f"read more: {item['link']}\n "
-                #session_attributes['cultural_events'].append({'index': count, 'item': item})
+                session_attributes['cultural_events'][count+1] = item
 
         else:
             response_message = f"There are no ongoing events in {city}"
             if date:
                 response_message += f" on {date}"
-        
+
         logger.debug(f'items before close {items}')
         logger.debug(f'response message before close {response_message}')
         return close(
@@ -133,6 +133,8 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
 
 def add_cultural_event_to_calendar(intent_request: dict) -> dict:
     session_attributes = intent_request.get("sessionAttributes", {})
+    logger.debug(
+        f'add_cultural_event_to_calendar sessionAttributes {session_attributes}')
     return close(session_attributes, "Fulfilled", {"contentType": "PlainText", "content": 'OK'},)
 
 
@@ -143,7 +145,7 @@ def dispatch(intent_request: dict) -> dict:
         intent_request (dict): data containg information about ongoing intent
 
     Raises:
-        Exception: raised when intention name is not found
+        Exception: raised when intention name is not found 
 
     Returns:
         dict: data to send to Lex
