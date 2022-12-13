@@ -13,8 +13,7 @@
       "name": "GetCulturalEventsCity",
       "slots": {
         "EventName": "Test event",
-        "City": "Poznań",
-        "Date": "2022-12-25"
+        "City": "Łódź"
       }
     }
   }
