@@ -18,7 +18,7 @@ def create_lex_args(body, token):
         "botName": CHATBOT_NAME,
         "botAlias": CHATBOT_ALIAS,
         "requestAttributes": {"access_token": token},
-        "userId": body["userId"]
+        "userId": body["userId"],
     }
     if "accept" in body:
         lex_args["accept"] = body["accept"]
