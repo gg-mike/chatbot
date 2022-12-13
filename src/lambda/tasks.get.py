@@ -6,12 +6,14 @@ from utility import create_debug_logger, get_slots
 logger = create_debug_logger()
 
 
-def prepare_response(response, deadline):
-    if len(response) == 0:
+def prepare_response(google_response, deadline):
+    if len(google_response) == 0:
         return f"No tasks found with deadline {deadline}"
     else:
-        task_name_list = [task["title"] for task in response]
-        return f"Task list with deadline {deadline}:\n" + "\n".join(task_name_list)
+        task_name_list = [task["title"] for task in google_response]
+        response = f"Task list with deadline {deadline}: " + ", ".join(task_name_list)
+        logger.debug(f"{response=}")
+        return response
 
 
 def handler(event, context):
