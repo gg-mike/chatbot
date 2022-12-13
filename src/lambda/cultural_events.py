@@ -95,7 +95,7 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
                 "date_start", None) == date]
         else:
             # get ongoing events for next week
-            response_message += "No date provided, getting events for next week"
+            response_message += "No date provided, getting events for next week "
             items = [
                 item
                 for item in items
@@ -162,7 +162,7 @@ def add_cultural_event_to_calendar(intent_request: dict) -> dict:
 
     if source == "FulfillmentCodeHook":
         logger.debug(f"session attributes {session_attributes}")
-        cultural_event_index = slots.get("CulturalEventIndex", None)
+        cultural_event_index = int(slots.get("CulturalEventIndex", None))
         cultural_event_json = session_attributes.get(
             f"cultural_event{cultural_event_index}", None)
         if not cultural_event_json:
@@ -177,7 +177,7 @@ def add_cultural_event_to_calendar(intent_request: dict) -> dict:
         return close(
             session_attributes,
             "Fulfilled",
-            {"contentType": "PlainText", "content": response_message},
+            {"contentType": "PlainText", "content": "OK"},
         )
 
 
