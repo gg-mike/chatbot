@@ -2,6 +2,7 @@ from boto3.dynamodb.conditions import Key
 from datetime import datetime
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
+import json
 
 import boto3
 
@@ -101,7 +102,7 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
 
         if items:
             for count, item in enumerate(items):
-                session_attributes[f'cultural_event_{count+1}']=item
+                session_attributes[f'cultural_event_{count+1}']=json.dumps(item)
                 response_message += f"{count+1}) Event name: {item.get('event_name','no title')}\n "
                 if item.get("time_start", None):
                     response_message += f"starts at {item.get('date_start','no date specified')} {item['time_start']}\n "
