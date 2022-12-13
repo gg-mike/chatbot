@@ -3,7 +3,7 @@ import requests
 from utility import create_debug_logger, get_access_token
 
 TOKEN_VERIFIER_URL = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token="
-GOOGLE_TOKEN_AUDIENCE = "529321912966-hlh7d2v96mkutruodo99ug9t6vjsen7r.apps.googleusercontent.com"
+GOOGLE_TOKEN_AUDIENCE = "938539554471-2qc8ol20ph9uso96a8ubg5k1c34srvtg.apps.googleusercontent.com"
 MINIMUM_EXPIRATION_TIME = 15
 
 logger = create_debug_logger()
