@@ -40,10 +40,11 @@ def validate_user_input(slots: dict) -> dict:
                 False, "Date", "That date is in the past. Provide future date"
             )
     if cultural_event_index:
-        if not isinstance(cultural_event_index, int):
+        try:
+            string_int = int(cultural_event_index)
+        except ValueError:
             return build_validation_result(
-                False, "CulturalEventIndex", "Provided index is not an integeer number. Provide valid index."
-            )
+                False, "CulturalEventIndex", "Provided index is not an integeer number. Provide valid index.")
     return {"isValid": True}
 
 
