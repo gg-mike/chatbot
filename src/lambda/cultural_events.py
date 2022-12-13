@@ -123,7 +123,7 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
                 response_message += f" on {date}"
         
         logger.debug(f'items before close {items}')
-        logger.debug(f'response message before close', {response_message})
+        logger.debug(f'response message before close {response_message}')
         return close(
             session_attributes,
             "Fulfilled",
