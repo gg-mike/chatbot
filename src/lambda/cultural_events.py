@@ -52,18 +52,17 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
         dict: data to send to Lex
     """
 
-    source = intent_request.get("invocationSource",  None)
+    source = intent_request.get("invocationSource", None)
     slots = intent_request["currentIntent"]["slots"]
 
-    session_attributes = intent_request.get("sessionAttributes",  {})
+    session_attributes = intent_request.get("sessionAttributes", {})
 
     logger.debug(f"source {source}")
     logger.debug(f"slots {slots}")
 
     if intent_request["invocationSource"] == "DialogCodeHook":
         # Validate any slots which have been specified.  If any are invalid, re-elicit for their value
-        validation_result = validate_user_input(
-            intent_request["currentIntent"]["slots"])
+        validation_result = validate_user_input(intent_request["currentIntent"]["slots"])
         if not validation_result["isValid"]:
             slots = intent_request["currentIntent"]["slots"]
             slots[validation_result["violatedSlot"]] = None
@@ -84,12 +83,10 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
         city = slots.get("City", None)
         response_message = ""
 
-        response = events_table.query(
-            KeyConditionExpression=Key("location").eq((city)))
+        response = events_table.query(KeyConditionExpression=Key("location").eq((city)))
         items = response["Items"]
         if date:
-            items = [item for item in items if item.get(
-                "date_start", None) == date]
+            items = [item for item in items if item.get("date_start", None) == date]
         else:
             # get ongoing events for next week
             response_message += "No date provided, getting events for next week"
@@ -103,7 +100,7 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
 
         logger.debug(f"Items: {items}")
 
-        session_attributes['cultural_events'] = {}
+        session_attributes["cultural_events"] = {}
         if items:
             for count, item in enumerate(items):
                 response_message += f"{count+1}) Event name: {item.get('event_name','no title')}\n "
@@ -115,15 +112,15 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
                     )
                 if item.get("link", None):
                     response_message += f"read more: {item['link']}\n "
-                session_attributes['cultural_events'][count+1] = item
+                session_attributes["cultural_events"][count + 1] = item
 
         else:
             response_message = f"There are no ongoing events in {city}"
             if date:
                 response_message += f" on {date}"
 
-        logger.debug(f'items before close {items}')
-        logger.debug(f'response message before close {response_message}')
+        logger.debug(f"items before close {items}")
+        logger.debug(f"response message before close {response_message}")
         return close(
             session_attributes,
             "Fulfilled",
@@ -133,9 +130,12 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
 
 def add_cultural_event_to_calendar(intent_request: dict) -> dict:
     session_attributes = intent_request.get("sessionAttributes", {})
-    logger.debug(
-        f'add_cultural_event_to_calendar sessionAttributes {session_attributes}')
-    return close(session_attributes, "Fulfilled", {"contentType": "PlainText", "content": 'OK'},)
+    logger.debug(f"add_cultural_event_to_calendar sessionAttributes {session_attributes}")
+    return close(
+        session_attributes,
+        "Fulfilled",
+        {"contentType": "PlainText", "content": "OK"},
+    )
 
 
 def dispatch(intent_request: dict) -> dict:
@@ -145,7 +145,7 @@ def dispatch(intent_request: dict) -> dict:
         intent_request (dict): data containg information about ongoing intent
 
     Raises:
-        Exception: raised when intention name is not found 
+        Exception: raised when intention name is not found
 
     Returns:
         dict: data to send to Lex
@@ -161,8 +161,8 @@ def dispatch(intent_request: dict) -> dict:
     # Dispatch to your bot's intent handlers
     if intent_name == "GetCulturalEventsCity":
         return get_cultural_events_by_city(intent_request)
-    elif intent_name == "GetWeatherNow":
-        return add_cultural_event_to_calendar(intent_request)
+    # elif intent_name == "AddCulturalEventToCalendar":
+    #     return add_cultural_event_to_calendar(intent_request)
 
     raise Exception("Intent with name " + intent_name + " not supported")
 

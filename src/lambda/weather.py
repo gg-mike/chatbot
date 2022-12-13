@@ -42,6 +42,7 @@ def validate_user_input(slots: dict) -> dict:
 
 ### INTENTS ###
 
+
 def get_weather_forecast(intent_request: dict) -> dict:
     """Handles user request for future weather forecast
 
@@ -58,8 +59,7 @@ def get_weather_forecast(intent_request: dict) -> dict:
 
     if intent_request["invocationSource"] == "DialogCodeHook":
         # Validate any slots which have been specified.  If any are invalid, re-elicit for their value
-        validation_result = validate_user_input(
-            intent_request["currentIntent"]["slots"])
+        validation_result = validate_user_input(intent_request["currentIntent"]["slots"])
         if not validation_result["isValid"]:
             slots = intent_request["currentIntent"]["slots"]
             slots[validation_result["violatedSlot"]] = None
@@ -83,13 +83,16 @@ def get_weather_forecast(intent_request: dict) -> dict:
             weather = open_weather_map_data["weather"][0]["main"]
             temp = open_weather_map_data["main"]["temp"]
             pressure = open_weather_map_data["main"]["pressure"]
-            response = f"Weather in {city} for {date}: {weather} temperature: {temp} pressure: {pressure}"
+            response = (
+                f"Weather in {city} for {date}: {weather} temperature: {temp} pressure: {pressure}"
+            )
             return close(
-                session_attributes, "Fulfilled", {
-                    "contentType": "PlainText", "content": response}
+                session_attributes, "Fulfilled", {"contentType": "PlainText", "content": response}
             )
         else:
-            return return_unexpected_failure(session_attributes, "Someting went wrong, try again later.")
+            return return_unexpected_failure(
+                session_attributes, "Someting went wrong, try again later."
+            )
 
 
 def get_weather_now(intent_request: dict) -> dict:
@@ -105,14 +108,11 @@ def get_weather_now(intent_request: dict) -> dict:
     source = intent_request["invocationSource"]
     slots = intent_request["currentIntent"]["slots"]
 
-    session_attributes = (
-        intent_request.get("sessionAttributes", {})
-    )
+    session_attributes = intent_request.get("sessionAttributes", {})
 
     if intent_request["invocationSource"] == "DialogCodeHook":
         # Validate any slots which have been specified.  If any are invalid, re-elicit for their value
-        validation_result = validate_user_input(
-            intent_request["currentIntent"]["slots"])
+        validation_result = validate_user_input(intent_request["currentIntent"]["slots"])
         if not validation_result["isValid"]:
             slots = intent_request["currentIntent"]["slots"]
             slots[validation_result["violatedSlot"]] = None
@@ -138,13 +138,12 @@ def get_weather_now(intent_request: dict) -> dict:
             logger.debug(f"response: {response}")
 
             return close(
-                session_attributes, "Fulfilled", {
-                    "contentType": "PlainText",
-                    "content": response
-                }
+                session_attributes, "Fulfilled", {"contentType": "PlainText", "content": response}
             )
         else:
-            return return_unexpected_failure(session_attributes, "Something went wrong, try again later.")
+            return return_unexpected_failure(
+                session_attributes, "Something went wrong, try again later."
+            )
 
 
 ### DISPATCH ###
@@ -179,7 +178,6 @@ def handler(event: dict, context: object) -> dict:
     """Route the incoming request based on intent. The JSON body of the request is provided in the event slot."""
 
     logger.debug(f"event.bot.name={event['bot']['name']}")
-    logger.debug(
-        f"userId={event['userId']}, intentName={event['currentIntent']['name']}")
+    logger.debug(f"userId={event['userId']}, intentName={event['currentIntent']['name']}")
 
     return dispatch(event)
