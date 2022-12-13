@@ -99,7 +99,7 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
 
         logger.debug(f"Items: {items}")
 
-        #session_attributes["user_cultural_events"] = {}
+        session_attributes["user_cultural_events"] = {}
         if items:
             for count, item in enumerate(items):
                 response_message += f"{count+1}) Event name: {item.get('event_name','no title')}\n "
@@ -111,7 +111,7 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
                     )
                 if item.get("link", None):
                     response_message += f"read more: {item['link']}\n "
-                #session_attributes["user_cultural_events"][count + 1] = item
+                session_attributes["user_cultural_events"][f"event{count+1}"] = item
 
         else:
             response_message = f"There are no ongoing events in {city}"
