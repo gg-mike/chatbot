@@ -12,6 +12,10 @@ lambda:
     _req:
       - boto3
       - unidecode
+      - google-api-python-client
+      - google-auth
+      - pytz
+
     _dep:
       - lex.py
   event_weather:

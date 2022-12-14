@@ -1,0 +1,24 @@
+{
+    "headers": {
+      "Debug": true,
+      "Authorization": "Bearer <token>"
+    },
+    "bot": {
+      "name": "getWeatherAndCulturalEvents",
+      "alias": "bot alias",
+      "version": "bot version"
+    },
+    "userId": "John",
+    "invocationSource": "FulfillmentCodeHook",
+    "currentIntent": {
+      "name": "AddCulturalEventToCalendar",
+      "slots": {
+        "EventName": "Test event",
+        "CulturalEventIndex":"1"
+      }
+    },
+    "sessionAttributes": {
+      "cultural_event_1": "{\"location\": \"Łódź\", \"date_start\": \"2022-12-15\", \"event_id\": \"70939812866125798386677299139242918072\", \"time_start\": \"18:30\", \"link\": \"https://www.youtube.com/watch?v=dQw4w9WgXcQ\", \"time_end\": \"20:00\", \"event_name\": \"Koncert\", \"date_end\": \"2022-12-16\"}"
+    }
+  }
+  

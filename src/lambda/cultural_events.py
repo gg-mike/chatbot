@@ -6,21 +6,15 @@ from dateutil.relativedelta import relativedelta
 import json
 from googleapi import calendars, events
 from setup_handler import google_api_handler as setup
-from lex import (
-    elicit_slot,
-    close,
-    delegate,
-    build_validation_result,
-    return_unexpected_failure,
-)
+from lex import elicit_slot, close, delegate, build_validation_result, return_unexpected_failure,
 from utility import create_debug_logger, isvalid_date, get_slots
 
 logger = create_debug_logger()
 
 # connect to dynamoDB
-TABLE_NAME = "CulturalEvents"
-dynamodb_client = boto3.resource("dynamodb")
-events_table = dynamodb_client.Table(TABLE_NAME)
+# TABLE_NAME = "CulturalEvents"
+# dynamodb_client = boto3.resource("dynamodb")
+# events_table = dynamodb_client.Table(TABLE_NAME)
 
 
 def validate_user_input(slots: dict) -> dict:
@@ -57,6 +51,8 @@ def validate_user_input(slots: dict) -> dict:
 
 
 def get_cultural_events_by_city(intent_request: dict) -> dict:
+    pass
+
     """Handles user request for future cultural event by specific date, city is optional
 
     Args:
@@ -67,7 +63,7 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
     """
 
     source = intent_request.get("invocationSource", None)
-    slots = intent_request.get(["currentIntent"]["slots"], None)
+    slots = intent_request["currentIntent"]["slots"]
 
     session_attributes = intent_request.get("sessionAttributes", {})
     logger.debug(f"source {source}")
@@ -143,12 +139,13 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
 def add_cultural_event_to_calendar(intent_request: dict) -> dict:
 
     source = intent_request.get("invocationSource", None)
-    slots = intent_request.get(["currentIntent"]["slots"], None)
+    slots = intent_request["currentIntent"]["slots"]
     logger.debug(f"source {source}")
     logger.debug(f"slots {slots}")
 
     session_attributes, service, err = setup(intent_request, "calendar", "v3")
-    if err is not None:
+    if err:
+        logger.debug(f"setup error: {err}")
         return return_unexpected_failure(session_attributes, err)
 
     if intent_request["invocationSource"] == "DialogCodeHook":
@@ -187,11 +184,11 @@ def add_cultural_event_to_calendar(intent_request: dict) -> dict:
             )
         cultural_event = json.loads(cultural_event_json)
 
-        logger.debug(f"cultural event with index ({cultural_event}): {cultural_event}")
+        logger.debug(f"cultural event with index ({cultural_event_index}): {cultural_event}")
 
         try:
             body = {
-                "summary": cultural_event.get("event_name", "Untitiled"),
+                "summary": cultural_event.get("event_name", "Untitled"),
                 "start": {"timeZone": "Europe/Warsaw"},
                 "end": {"timeZone": "Europe/Warsaw"},
             }
@@ -212,12 +209,13 @@ def add_cultural_event_to_calendar(intent_request: dict) -> dict:
                 body["end"]["date"] = end_date
 
             if cultural_event.get("location") is not None:
-                body["location"] = cultural_event["Location"]
+                body["location"] = cultural_event["location"]
                 events.create(service, calendar_id, body)
         except Exception as err:
+            print(err)
             return return_unexpected_failure(
                 session_attributes,
-                f'''Failed to add event "{cultural_event.get("event_name","Untitiled")}"''',
+                f'''Failed to add event "{cultural_event.get("event_name","Untitled")}"''',
             )
 
         return close(
@@ -225,7 +223,7 @@ def add_cultural_event_to_calendar(intent_request: dict) -> dict:
             "Fulfilled",
             {
                 "contentType": "PlainText",
-                "content": f'''Created event "{cultural_event.get("event_name","Untitiled")}"''',
+                "content": f'''Created event "{cultural_event.get("event_name","Untitled")}"''',
             },
         )
 

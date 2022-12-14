@@ -14,7 +14,7 @@ def google_api_handler(event: dict, service_name: str, version: str) -> tuple:
         tuple: session attributes, google service and error message (None if no error occurred)
     """
 
-    session_attributes = event["session_attributes"] if "session_attributes" in event else {}
+    session_attributes = event["sessionAttributes"] if "sessionAttributes" in event else {}
 
     auth_locations = ["requestAttributes", "headers"]
     token = None
