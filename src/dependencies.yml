@@ -14,6 +14,18 @@ lambda:
       - unidecode
     _dep:
       - lex.py
+  event_weather:
+    _req:
+      - boto3
+      - geopy
+      - google-api-python-client
+      - google-auth
+      - pytz
+    _dep:
+      - googleapi
+      - lex.py
+      - openweathermapAPI
+      - setup_handler.py
   events:
     _req:
       - google-api-python-client

@@ -176,6 +176,22 @@ Resources:
 
   # Weather
 
+  GetWeatherForEventFunc:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: gen/event_weather
+      Policies:
+        - AmazonDynamoDBFullAccess
+        - SecretsManagerReadWrite
+      Events:
+        GetEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ChatbotApi
+            Path: /event_weather
+            Method: get
+
+
   WeatherFunc:
     Type: AWS::Serverless::Function
     Properties:
@@ -183,7 +199,6 @@ Resources:
       Policies:
         - AmazonDynamoDBFullAccess
         - SecretsManagerReadWrite
-
       Events:
         GetEvent:
           Type: HttpApi

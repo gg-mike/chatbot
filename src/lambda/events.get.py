@@ -39,7 +39,7 @@ def handler(event: dict, context: object) -> dict:
 
         items = {k: filter_dict(v, ["location", "start", "end"]) for k, v in items.items()}
         if is_current_events:
-            session_attributes["closestCurrentEvent"] = list(items.values())[0]
+            session_attributes["upcomingEvent"] = dumps(list(items.values())[0])
 
         return close(
             session_attributes,

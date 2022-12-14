@@ -13,11 +13,13 @@ def get_datetime(date, time) -> str:
     return str(timezone("Europe/Warsaw").localize(dt)).replace(" ", "T")
 
 
-def get(service, calendar_id: str, d_min: str = None, d_max: str = None):
+def get(service, calendar_id: str, d_min: str = None, d_max: str = None, days_delta: int = 7):
     dt_now = datetime.now()
 
     dt_min = datetime.fromisoformat(d_min) if d_min is not None else dt_now
-    dt_max = datetime.fromisoformat(d_max) if d_max is not None else dt_min + timedelta(days=7)
+    dt_max = (
+        datetime.fromisoformat(d_max) if d_max is not None else dt_min + timedelta(days=days_delta)
+    )
 
     t_min = get_datetime(dt_min.date(), datetime.min.time())
     t_max = get_datetime(dt_max.date(), datetime.max.time())
