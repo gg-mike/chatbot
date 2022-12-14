@@ -1,5 +1,9 @@
 def elicit_slot(
-    session_attributes: dict, intent_name: str, slots: dict, slot_to_elicit: str, message: dict
+    session_attributes: dict,
+    intent_name: str,
+    slots: dict,
+    slot_to_elicit: str,
+    message: dict,
 ) -> dict:
     """Informs Amazon Lex that the user is expected to provide a slot value in the response
 
@@ -79,7 +83,9 @@ def return_unexpected_failure(session_attributes: dict, message_content: str) ->
         dict: _description_
     """
     return close(
-        session_attributes, "Fulfilled", {"contentType": "PlainText", "content": message_content}
+        session_attributes,
+        "Fulfilled",
+        {"contentType": "PlainText", "content": message_content},
     )
 
 

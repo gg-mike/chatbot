@@ -47,7 +47,11 @@ def get_task_list_id(service, task_list_name) -> str:
 
 def create_task(service, title: str, deadline_date: str, description: str):
     task_list_id = get_task_list_id(service, CHATBOT_TASKS_LIST)
-    task_body = {"title": title, "due": get_datetime(deadline_date), "notes": description}
+    task_body = {
+        "title": title,
+        "due": get_datetime(deadline_date),
+        "notes": description,
+    }
     return service.tasks().insert(tasklist=task_list_id, body=task_body).execute()
 
 

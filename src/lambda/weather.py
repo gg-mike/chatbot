@@ -2,7 +2,13 @@ from datetime import datetime
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
 
-from lex import elicit_slot, close, delegate, return_unexpected_failure, build_validation_result
+from lex import (
+    elicit_slot,
+    close,
+    delegate,
+    return_unexpected_failure,
+    build_validation_result,
+)
 from utility import create_debug_logger, isvalid_date
 from openweathermapAPI import weather_handler
 
@@ -26,7 +32,7 @@ def validate_user_input(slots: dict) -> dict:
             return build_validation_result(
                 False, "Date", "Sorry, provided date is incorrectly formatted"
             )
-        if parse(date) < datetime.today():
+        if parse(date) < datetime.today() - relativedelta(days=1):
             return build_validation_result(
                 False, "Date", "That date is in the past. Provide future date"
             )
@@ -87,7 +93,9 @@ def get_weather_forecast(intent_request: dict) -> dict:
                 f"Weather in {city} for {date}: {weather} temperature: {temp} pressure: {pressure}"
             )
             return close(
-                session_attributes, "Fulfilled", {"contentType": "PlainText", "content": response}
+                session_attributes,
+                "Fulfilled",
+                {"contentType": "PlainText", "content": response},
             )
         else:
             return return_unexpected_failure(
@@ -138,7 +146,9 @@ def get_weather_now(intent_request: dict) -> dict:
             logger.debug(f"response: {response}")
 
             return close(
-                session_attributes, "Fulfilled", {"contentType": "PlainText", "content": response}
+                session_attributes,
+                "Fulfilled",
+                {"contentType": "PlainText", "content": response},
             )
         else:
             return return_unexpected_failure(

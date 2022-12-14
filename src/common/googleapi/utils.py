@@ -4,7 +4,10 @@ from googleapiclient.discovery import build
 
 def create_service(access_token: str, service_name: str, version: str) -> tuple:
     try:
-        return build(service_name, version, credentials=Credentials(token=access_token)), None
+        return (
+            build(service_name, version, credentials=Credentials(token=access_token)),
+            None,
+        )
     except Exception as err:
         return None, err
 

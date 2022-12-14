@@ -50,7 +50,10 @@ def handler(event: dict, context: object) -> dict:
         return close(
             session_attributes,
             "Fulfilled",
-            {"contentType": "PlainText", "content": f"Created event \"{slots['EventName']}\""},
+            {
+                "contentType": "PlainText",
+                "content": f"Created event \"{slots['EventName']}\"",
+            },
         )
     except Exception as err:
         return return_unexpected_failure(

@@ -1,14 +1,19 @@
 from boto3.dynamodb.conditions import Key
+import boto3
 from datetime import datetime
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
 import json
-
-import boto3
-
-from lex import elicit_slot, close, delegate, build_validation_result
-from utility import create_debug_logger, isvalid_date
-
+from googleapi import calendars, events
+from setup_handler import google_api_handler as setup
+from lex import (
+    elicit_slot,
+    close,
+    delegate,
+    build_validation_result,
+    return_unexpected_failure,
+)
+from utility import create_debug_logger, isvalid_date, get_slots
 
 logger = create_debug_logger()
 
@@ -44,7 +49,10 @@ def validate_user_input(slots: dict) -> dict:
             string_int = int(cultural_event_index)
         except ValueError:
             return build_validation_result(
-                False, "CulturalEventIndex", "Provided index is not an integeer number. Provide valid index.")
+                False,
+                "CulturalEventIndex",
+                "Provided index is not an integeer number. Provide valid index.",
+            )
     return {"isValid": True}
 
 
@@ -59,7 +67,7 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
     """
 
     source = intent_request.get("invocationSource", None)
-    slots = intent_request["currentIntent"]["slots"]
+    slots = intent_request.get(["currentIntent"]["slots"], None)
 
     session_attributes = intent_request.get("sessionAttributes", {})
     logger.debug(f"source {source}")
@@ -67,8 +75,7 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
 
     if intent_request["invocationSource"] == "DialogCodeHook":
         # Validate any slots which have been specified.  If any are invalid, re-elicit for their value
-        validation_result = validate_user_input(
-            intent_request["currentIntent"]["slots"])
+        validation_result = validate_user_input(intent_request["currentIntent"]["slots"])
         if not validation_result["isValid"]:
             slots = intent_request["currentIntent"]["slots"]
             slots[validation_result["violatedSlot"]] = None
@@ -88,12 +95,10 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
         city = slots.get("City", None)
         response_message = ""
 
-        response = events_table.query(
-            KeyConditionExpression=Key("location").eq((city)))
+        response = events_table.query(KeyConditionExpression=Key("location").eq((city)))
         items = response["Items"]
         if date:
-            items = [item for item in items if item.get(
-                "date_start", None) == date]
+            items = [item for item in items if item.get("date_start", None) == date]
         else:
             # get ongoing events for next week
             response_message += "No date provided, getting events for next week "
@@ -109,8 +114,7 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
 
         if items:
             for count, item in enumerate(items):
-                session_attributes[f'cultural_event_{count+1}'] = json.dumps(
-                    item)
+                session_attributes[f"cultural_event_{count+1}"] = json.dumps(item)
                 response_message += f"{count+1}) Event name: {item.get('event_name','no title')}\n "
                 if item.get("time_start", None):
                     response_message += f"starts at {item.get('date_start','no date specified')} {item['time_start']}\n "
@@ -137,17 +141,19 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
 
 
 def add_cultural_event_to_calendar(intent_request: dict) -> dict:
-    source = intent_request.get("invocationSource", None)
-    slots = intent_request["currentIntent"]["slots"]
 
-    session_attributes = intent_request.get("sessionAttributes", {})
+    source = intent_request.get("invocationSource", None)
+    slots = intent_request.get(["currentIntent"]["slots"], None)
     logger.debug(f"source {source}")
     logger.debug(f"slots {slots}")
 
+    session_attributes, service, err = setup(intent_request, "calendar", "v3")
+    if err is not None:
+        return return_unexpected_failure(session_attributes, err)
+
     if intent_request["invocationSource"] == "DialogCodeHook":
         # Validate any slots which have been specified.  If any are invalid, re-elicit for their value
-        validation_result = validate_user_input(
-            intent_request["currentIntent"]["slots"])
+        validation_result = validate_user_input(intent_request["currentIntent"]["slots"])
         if not validation_result["isValid"]:
             slots = intent_request["currentIntent"]["slots"]
             slots[validation_result["violatedSlot"]] = None
@@ -162,23 +168,67 @@ def add_cultural_event_to_calendar(intent_request: dict) -> dict:
         return delegate(session_attributes, slots)
 
     if source == "FulfillmentCodeHook":
+
+        calendar_id = calendars.get(service, "Chatbot")
+        slots = get_slots(intent_request)
+        logger.debug(f"slots {slots}")
         logger.debug(f"session attributes {session_attributes}")
+
         cultural_event_index = int(slots.get("CulturalEventIndex", None))
-        cultural_event_json = session_attributes.get(
-            f"cultural_event_{cultural_event_index}", None)
+        cultural_event_json = session_attributes.get(f"cultural_event_{cultural_event_index}", None)
+
         if not cultural_event_json:
             return close(
                 session_attributes,
                 "Fulfilled",
-                {"contentType": "PlainText", "content": f"sorry, couldn't add cultural event ({cultural_event_json}) to calendar."})
+                {
+                    "contentType": "PlainText",
+                    "content": f"sorry, couldn't add cultural event ({cultural_event_json}) to calendar.",
+                },
+            )
+
         cultural_event = json.loads(cultural_event_json)
 
-        logger.debug(f"cultural event with index ({cultural_event}) {cultural_event}")
+        logger.debug(f"cultural event with index ({cultural_event}): {cultural_event}")
+
+        try:
+            body = {
+                "summary": cultural_event.get("event_name", "Untitiled"),
+                "start": {"timeZone": "Europe/Warsaw"},
+                "end": {"timeZone": "Europe/Warsaw"},
+            }
+
+            start_date = cultural_event["date_start"]
+            end_date = cultural_event["date_end"]
+
+            if cultural_event.get("time_start") is not None:
+                start_time = cultural_event["time_start"]
+                body["start"]["dateTime"] = f"{start_date}T{start_time}"
+            else:
+                body["start"]["date"] = start_date
+
+            if cultural_event.get("time_end") is not None:
+                end_time = cultural_event["time_end"]
+                body["end"]["dateTime"] = f"{end_date}T{end_time}"
+            else:
+                body["end"]["date"] = end_date
+
+            if cultural_event.get("location") is not None:
+                body["location"] = cultural_event["Location"]
+                events.create(service, calendar_id, body)
+        except Exception as err:
+            return return_unexpected_failure(
+                session_attributes,
+                f'''Failed to add event "{cultural_event.get("event_name","Untitiled")}"''',
+            )
 
         return close(
             session_attributes,
             "Fulfilled",
-            {"contentType": "PlainText", "content": "OK"},
+            {
+                "contentType": "PlainText",
+                "content": f'''Created event "{cultural_event.get("event_name","Untitiled")}"''',
+            },
         )
 
 
