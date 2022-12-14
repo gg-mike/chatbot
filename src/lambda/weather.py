@@ -99,7 +99,7 @@ def get_weather_forecast(intent_request: dict) -> dict:
             )
         else:
             return return_unexpected_failure(
-                session_attributes, "Someting went wrong, try again later."
+                session_attributes, "Something went wrong, try again later."
             )
 
 
@@ -161,7 +161,7 @@ def dispatch(intent_request: dict) -> dict:
     """Called when specifying an intent.
 
     Args:
-        intent_request (dict): data containg information about ongoing intent
+        intent_request (dict): data containing information about ongoing intent
 
     Raises:
         Exception: raised when intention name is not found

@@ -51,7 +51,7 @@ def validate_user_input(slots: dict) -> dict:
             return build_validation_result(
                 False,
                 "CulturalEventIndex",
-                "Provided index is not an integeer number. Provide valid index.",
+                "Provided index is not an integer number. Provide valid index.",
             )
     return {"isValid": True}
 
@@ -60,7 +60,7 @@ def get_cultural_events_by_city(intent_request: dict) -> dict:
     """Handles user request for future cultural event by specific date, city is optional
 
     Args:
-        intent_request (dict): data containg information about ongoing intent
+        intent_request (dict): data containing information about ongoing intent
 
     Returns:
         dict: data to send to Lex
@@ -176,7 +176,6 @@ def add_cultural_event_to_calendar(intent_request: dict) -> dict:
 
         cultural_event_index = int(slots.get("CulturalEventIndex", None))
         cultural_event_json = session_attributes.get(f"cultural_event_{cultural_event_index}", None)
-
         if not cultural_event_json:
             return close(
                 session_attributes,
@@ -186,7 +185,6 @@ def add_cultural_event_to_calendar(intent_request: dict) -> dict:
                     "content": f"sorry, couldn't add cultural event ({cultural_event_json}) to calendar.",
                 },
             )
-
         cultural_event = json.loads(cultural_event_json)
 
         logger.debug(f"cultural event with index ({cultural_event}): {cultural_event}")
@@ -236,7 +234,7 @@ def dispatch(intent_request: dict) -> dict:
     """Called when specifying an intent.
 
     Args:
-        intent_request (dict): data containg information about ongoing intent
+        intent_request (dict): data containing information about ongoing intent
 
     Raises:
         Exception: raised when intention name is not found

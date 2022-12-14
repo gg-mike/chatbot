@@ -16,7 +16,7 @@ def get_weather_date(
         date (str, optional): date for forecast. Defaults to None.
         city (str, optional): city for forecast. Defaults to None.
         latitude (float, optional): latitude of city. Defaults to None.
-        longitude (float, optional): longitud of city. Defaults to None.
+        longitude (float, optional): longitude of city. Defaults to None.
 
     Returns:
         dict | list: weather data or None if error occurs
