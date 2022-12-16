@@ -15,9 +15,11 @@ lambda:
       - google-api-python-client
       - google-auth
       - pytz
-
     _dep:
       - lex.py
+      - googleapi
+      - setup_handler.py
+
   event_weather:
     _req:
       - boto3

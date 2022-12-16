@@ -1,6 +1,6 @@
 {
     "headers": {
-      "Debug": true,
+      "debug": "true",
       "Authorization": "Bearer <token>"
     },
     "bot": {

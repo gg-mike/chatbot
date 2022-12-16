@@ -113,12 +113,12 @@ Resources:
         - AmazonDynamoDBFullAccess
 
       Events:
-        GetEvent:
+        PostEvent:
           Type: HttpApi
           Properties:
             ApiId: !Ref ChatbotApi
             Path: /cultural_events
-            Method: get
+            Method: post
             Auth:
               Authorizer: NONE
 

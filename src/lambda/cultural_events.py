@@ -6,15 +6,15 @@ from dateutil.relativedelta import relativedelta
 import json
 from googleapi import calendars, events
 from setup_handler import google_api_handler as setup
-from lex import elicit_slot, close, delegate, build_validation_result, return_unexpected_failure,
+from lex import elicit_slot, close, delegate, build_validation_result, return_unexpected_failure
 from utility import create_debug_logger, isvalid_date, get_slots
 
 logger = create_debug_logger()
 
 # connect to dynamoDB
-# TABLE_NAME = "CulturalEvents"
-# dynamodb_client = boto3.resource("dynamodb")
-# events_table = dynamodb_client.Table(TABLE_NAME)
+TABLE_NAME = "CulturalEvents"
+dynamodb_client = boto3.resource("dynamodb")
+events_table = dynamodb_client.Table(TABLE_NAME)
 
 
 def validate_user_input(slots: dict) -> dict:
@@ -195,8 +195,8 @@ def add_cultural_event_to_calendar(intent_request: dict) -> dict:
 
             start_date = cultural_event["date_start"]
             end_date = cultural_event["date_end"]
-
             if cultural_event.get("time_start") is not None:
+
                 start_time = cultural_event["time_start"]
                 body["start"]["dateTime"] = f"{start_date}T{start_time}"
             else:
