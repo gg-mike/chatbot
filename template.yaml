@@ -119,8 +119,7 @@ Resources:
             ApiId: !Ref ChatbotApi
             Path: /cultural_events
             Method: post
-            Auth:
-              Authorizer: NONE
+
 
   # Events
 
