@@ -49,7 +49,14 @@ lambda:
       - googleapi
       - lex.py
       - setup_handler.py
-  weather:
+  weather_date:
+    _req:
+      - boto3
+      - geopy
+    _dep:
+      - lex.py
+      - openweathermapAPI
+  weather_today:
     _req:
       - boto3
       - geopy

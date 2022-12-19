@@ -190,23 +190,39 @@ Resources:
             Path: /event_weather
             Method: get
 
-
-  WeatherFunc:
+  WeatherTodayFunc:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: gen/weather
+      CodeUri: gen/weather_today
       Policies:
-        - AmazonDynamoDBFullAccess
         - SecretsManagerReadWrite
       Events:
         GetEvent:
           Type: HttpApi
           Properties:
             ApiId: !Ref ChatbotApi
-            Path: /weather
+            Path: /weather_today
             Method: get
             Auth:
               Authorizer: NONE
+
+  WeatherDateFunc:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: gen/weather_date
+      Policies:
+        - SecretsManagerReadWrite
+      Events:
+        GetEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ChatbotApi
+            Path: /weather_date
+            Method: get
+            Auth:
+              Authorizer: NONE
+
+
 
 Outputs:
   ChatbotApi:
