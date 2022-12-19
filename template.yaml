@@ -104,10 +104,10 @@ Resources:
 
   # Cultural events
 
-  CulturalEventsFunc:
+  CulturalEventsCityFunc:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: gen/cultural_events
+      CodeUri: gen/cultural_events_city
       Policies:
         - SecretsManagerReadWrite
         - AmazonDynamoDBFullAccess
@@ -117,10 +117,25 @@ Resources:
           Type: HttpApi
           Properties:
             ApiId: !Ref ChatbotApi
-            Path: /cultural_events
+            Path: /cultural_events_city
             Method: post
 
 
+  CulturalEventsAddToCalendarFunc:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: gen/cultural_events_add_to_calendar
+      Policies:
+        - SecretsManagerReadWrite
+        - AmazonDynamoDBFullAccess
+
+      Events:
+        PostEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref ChatbotApi
+            Path: /cultural_events_add_to_calendar
+            Method: post
   # Events
 
   EventGetFunc:

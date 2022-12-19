@@ -8,7 +8,7 @@ lambda:
   core:
     _req:
       - boto3
-  cultural_events:
+  cultural_events_city:
     _req:
       - boto3
       - unidecode
@@ -19,6 +19,19 @@ lambda:
       - lex.py
       - googleapi
       - setup_handler.py
+
+  cultural_events_add_to_calendar:
+    _req:
+      - boto3
+      - unidecode
+      - google-api-python-client
+      - google-auth
+      - pytz
+    _dep:
+      - lex.py
+      - googleapi
+      - setup_handler.py
+
 
   event_weather:
     _req:
