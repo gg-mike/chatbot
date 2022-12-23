@@ -3,7 +3,10 @@ import requests
 from utility import create_debug_logger, get_access_token
 
 TOKEN_VERIFIER_URL = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token="
-GOOGLE_TOKEN_AUDIENCE = "938539554471-2qc8ol20ph9uso96a8ubg5k1c34srvtg.apps.googleusercontent.com"
+GOOGLE_TOKEN_AUDIENCE = [
+"938539554471-2qc8ol20ph9uso96a8ubg5k1c34srvtg.apps.googleusercontent.com",
+"938539554471-sa03v4hjosc0kis3ac5esuh6d7h4aan0.apps.googleusercontent.com"
+]
 MINIMUM_EXPIRATION_TIME = 15
 
 logger = create_debug_logger()
@@ -17,7 +20,7 @@ def isTokenValid(token):
     if (
         response.status_code == requests.codes["ok"]
         and body["expires_in"] > MINIMUM_EXPIRATION_TIME
-        and body["audience"] == GOOGLE_TOKEN_AUDIENCE
+        and body["audience"] in GOOGLE_TOKEN_AUDIENCE
     ):
         return True
     return False
