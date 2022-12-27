@@ -244,3 +244,4 @@ $RECYCLE.BIN/
 *aws-sam
 gen
 .idea
+.env
