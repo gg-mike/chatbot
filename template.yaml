@@ -81,7 +81,7 @@ Resources:
       Policies:
         - AmazonLexFullAccess
       Events:
-        AnyEvent:
+        PostEvent:
           Type: HttpApi
           Properties:
             ApiId: !Ref ChatbotApi
