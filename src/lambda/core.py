@@ -12,12 +12,13 @@ CHATBOT_SERVICE = "lex-runtime"
 CHATBOT_REGION = "eu-west-2"
 
 
-def create_lex_args(body, token):
+def create_lex_args(body: dict, token: str):
     logger.debug(f"{body=}")
     lex_args = {
         "botName": CHATBOT_NAME,
         "botAlias": CHATBOT_ALIAS,
         "requestAttributes": {"access_token": token},
+        "sessionAttributes": body.get("sessionAttributes", {}),
         "userId": body["userId"],
     }
     if "accept" in body:
@@ -32,7 +33,7 @@ def create_lex_args(body, token):
     return lex_args
 
 
-def prepare_response(response):
+def prepare_response(response: dict):
     logger.debug(f"{response=}")
     response["audioStream"] = base64.b64encode(response["audioStream"].read()).decode()
     response_json = json.dumps(response, indent=4)
