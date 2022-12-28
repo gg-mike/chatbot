@@ -50,13 +50,15 @@ def handler(event: dict, context: object) -> dict:
     """Route the incoming request based on intent. The JSON body of the request is provided in the event slot."""
 
     logger.debug(f"event.bot.name={event['bot']['name']}")
-    logger.debug(f"userId={event['userId']}, intentName={event['currentIntent']['name']}")
+    logger.debug(
+        f"userId={event['userId']}, intentName={event['currentIntent']['name']}"
+    )
 
     source = event["invocationSource"]
     slots = event["currentIntent"]["slots"]
     session_attributes = event.get("sessionAttributes", {})
 
-    if event["invocationSource"] == "DialogCodeHook":
+    if source == "DialogCodeHook":
         # Validate any slots which have been specified.  If any are invalid, re-elicit for their value
         validation_result = validate_user_input(event["currentIntent"]["slots"])
         if not validation_result["isValid"]:
@@ -82,9 +84,7 @@ def handler(event: dict, context: object) -> dict:
             weather = open_weather_map_data["weather"][0]["main"]
             temp = open_weather_map_data["main"]["temp"]
             pressure = open_weather_map_data["main"]["pressure"]
-            response = (
-                f"Weather in {city} for {date}: {weather} temperature: {temp} pressure: {pressure}"
-            )
+            response = f"Weather in {city} for {date}: {weather} temperature: {temp} pressure: {pressure}"
             return close(
                 session_attributes,
                 "Fulfilled",

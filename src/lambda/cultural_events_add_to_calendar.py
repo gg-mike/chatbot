@@ -60,7 +60,6 @@ def handler(event: dict, context: object) -> dict:
     """Route the incoming request based on intent. The JSON body of the request is provided in the event slot."""
     logger.debug("event.bot.name={}".format(event["bot"]["name"]))
     source = event.get("invocationSource", None)
-    slots = event["currentIntent"]["slots"]
     logger.debug(f"source {source}")
     logger.debug(f"slots {slots}")
 
@@ -69,7 +68,7 @@ def handler(event: dict, context: object) -> dict:
         logger.debug(f"setup error: {err}")
         return return_unexpected_failure(session_attributes, err)
 
-    if event["invocationSource"] == "DialogCodeHook":
+    if source == "DialogCodeHook":
         # Validate any slots which have been specified.  If any are invalid, re-elicit for their value
         validation_result = validate_user_input(event["currentIntent"]["slots"])
         if not validation_result["isValid"]:
@@ -93,7 +92,9 @@ def handler(event: dict, context: object) -> dict:
         logger.debug(f"session attributes {session_attributes}")
 
         cultural_event_index = int(slots.get("CulturalEventIndex", None))
-        cultural_event_json = session_attributes.get(f"cultural_event_{cultural_event_index}", None)
+        cultural_event_json = session_attributes.get(
+            f"cultural_event_{cultural_event_index}", None
+        )
         if not cultural_event_json:
             return close(
                 session_attributes,
@@ -105,7 +106,9 @@ def handler(event: dict, context: object) -> dict:
             )
         cultural_event = json.loads(cultural_event_json)
 
-        logger.debug(f"cultural event with index ({cultural_event_index}): {cultural_event}")
+        logger.debug(
+            f"cultural event with index ({cultural_event_index}): {cultural_event}"
+        )
 
         try:
             body = {
