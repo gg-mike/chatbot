@@ -61,7 +61,6 @@ def handler(event: dict, context: object) -> dict:
     logger.debug("event.bot.name={}".format(event["bot"]["name"]))
     source = event.get("invocationSource", None)
     logger.debug(f"source {source}")
-    logger.debug(f"slots {slots}")
 
     session_attributes, service, err = setup(event, "calendar", "v3")
     if err:
