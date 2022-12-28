@@ -59,9 +59,7 @@ def validate_user_input(slots: dict) -> dict:
 def handler(event: dict, context: object) -> dict:
     """Route the incoming request based on intent. The JSON body of the request is provided in the event slot."""
     logger.debug("event.bot.name={}".format(event["bot"]["name"]))
-    logger.debug(
-        f"userId={event['userId']}, intentName={event['currentIntent']['name']}"
-    )
+    logger.debug(f"userId={event['userId']}, intentName={event['currentIntent']['name']}")
     source = event.get("invocationSource", None)
     slots = event["currentIntent"]["slots"]
 
@@ -111,13 +109,13 @@ def handler(event: dict, context: object) -> dict:
         if items:
             for count, item in enumerate(items):
                 session_attributes[f"cultural_event_{count+1}"] = json.dumps(item)
-                response_message += (
-                    f"{count+1}) Event name: {item.get('event_name','no title')}\n "
-                )
+                response_message += f"{count+1}) Event name: {item.get('event_name','no title')}\n "
                 if item.get("time_start", None):
                     response_message += f"starts at {item.get('date_start','no date specified')} {item['time_start']}\n "
                 if item.get("time_end", None):
-                    response_message += f"ends at {item.get('date_end','no date specified')} {item['time_end']}\n "
+                    response_message += (
+                        f"ends at {item.get('date_end','no date specified')} {item['time_end']}\n "
+                    )
                 if item.get("link", None):
                     response_message += f"read more: {item['link']}\n "
 

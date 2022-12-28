@@ -11,7 +11,6 @@ logger = create_debug_logger()
 def get_info_on_upcoming_event(default_location: str, session_attributes: dict, service) -> tuple:
     if "upcomingEvent" in session_attributes:
         upcoming_event = loads(session_attributes["upcomingEvent"])
-
         return upcoming_event.get("location", default_location), upcoming_event["start"], None
 
     calendar_id = calendars.get(service, "Chatbot")
@@ -40,7 +39,8 @@ def get_info_on_upcoming_event(default_location: str, session_attributes: dict, 
             ),
         )
 
-    return items[0]["location"], items[0]["start"], None
+    upcomingEvent = list(items.values())[0]
+    return upcomingEvent.get("location", default_location), upcomingEvent["start"], None
 
 
 def handler(event: dict, context: object) -> dict:
@@ -50,7 +50,8 @@ def handler(event: dict, context: object) -> dict:
     if err is not None:
         return return_unexpected_failure(session_attributes, err)
 
-    location, startDict, message = get_info_on_upcoming_event("Poznań", session_attributes, service)  # TODO: Change default location from Poznań to location of client's app
+    # TODO: Change default location from Poznań to location of client's app
+    location, startDict, message = get_info_on_upcoming_event("Poznań", session_attributes, service)
 
     if message is not None:
         return message

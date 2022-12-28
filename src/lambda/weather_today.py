@@ -47,9 +47,7 @@ def validate_user_input(slots: dict) -> dict:
 
 def handler(event: dict, context: object) -> dict:
     logger.debug(f"event.bot.name={event['bot']['name']}")
-    logger.debug(
-        f"userId={event['userId']}, intentName={event['currentIntent']['name']}"
-    )
+    logger.debug(f"userId={event['userId']}, intentName={event['currentIntent']['name']}")
 
     source = event["invocationSource"]
     slots = event["currentIntent"]["slots"]
