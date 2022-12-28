@@ -60,6 +60,8 @@ def handler(event: dict, context: object) -> dict:
     """Route the incoming request based on intent. The JSON body of the request is provided in the event slot."""
     logger.debug("event.bot.name={}".format(event["bot"]["name"]))
     source = event.get("invocationSource", None)
+    slots = event["currentIntent"]["slots"]
+
     logger.debug(f"source {source}")
 
     session_attributes, service, err = setup(event, "calendar", "v3")
