@@ -38,11 +38,11 @@ def validate_user_input(slots: dict) -> dict:
     if date:
         if not isvalid_date(date):
             return build_validation_result(
-                False, "Date", "Sorry, provided date is incorrectly formatted"
+                False, "Date", "Sorry, provided date is incorrectly formatted."
             )
         if parse(date) < datetime.today():
             return build_validation_result(
-                False, "Date", "That date is in the past. Provide future date"
+                False, "Date", "That date is in the past. Provide future date."
             )
     if cultural_event_index:
         try:
@@ -95,13 +95,13 @@ def handler(event: dict, context: object) -> dict:
             items = [item for item in items if item.get("date_start", None) == date]
         else:
             # get ongoing events for next week
-            response_message += "No date provided, getting events for next week "
+            response_message += "No date provided, getting events for next month."
             items = [
                 item
                 for item in items
                 if datetime.today()
                 <= parse(item.get("date_start", datetime.today()))
-                <= datetime.today() + relativedelta(days=7)
+                <= datetime.today() + relativedelta(days=30)
             ]
 
         logger.debug(f"Items: {items}")

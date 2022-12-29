@@ -30,17 +30,17 @@ def validate_user_input(slots: dict) -> dict:
     if date:
         if not isvalid_date(date):
             return build_validation_result(
-                False, "Date", "Sorry, provided date is incorrectly formatted"
+                False, "Date", "Sorry, provided date is incorrectly formatted."
             )
         if parse(date) < datetime.today() - relativedelta(days=1):
             return build_validation_result(
-                False, "Date", "That date is in the past. Provide future date"
+                False, "Date", "That date is in the past. Provide future date."
             )
         if datetime.today() + relativedelta(days=5) < parse(date):
             return build_validation_result(
                 False,
                 "Date",
-                f"Sorry, we currently don't support forecasts for dates further than 5 days from now.",
+                f"Sorry, currently I don't support forecasts for dates further than 5 days from now.",
             )
 
     return {"isValid": True}
@@ -84,7 +84,7 @@ def handler(event: dict, context: object) -> dict:
             weather = open_weather_map_data["weather"][0]["main"]
             temp = open_weather_map_data["main"]["temp"]
             pressure = open_weather_map_data["main"]["pressure"]
-            response = f"Weather in {city} for {date}: {weather} temperature: {temp} pressure: {pressure}"
+            response = f"Overall weather in {city} for {date}: {weather}, temperature: {temp} degrees Celsius, pressure: {pressure}hPa"
             return close(
                 session_attributes,
                 "Fulfilled",

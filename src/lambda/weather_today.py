@@ -29,11 +29,11 @@ def validate_user_input(slots: dict) -> dict:
     if date:
         if not isvalid_date(date):
             return build_validation_result(
-                False, "Date", "Sorry, provided date is incorrectly formatted"
+                False, "Date", "Sorry, provided date is incorrectly formatted."
             )
         if parse(date) < datetime.today() - relativedelta(days=1):
             return build_validation_result(
-                False, "Date", "That date is in the past. Provide future date"
+                False, "Date", "That date is in the past. Provide future date."
             )
         if datetime.today() + relativedelta(days=5) < parse(date):
             return build_validation_result(

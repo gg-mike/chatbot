@@ -38,11 +38,11 @@ def validate_user_input(slots: dict) -> dict:
     if date:
         if not isvalid_date(date):
             return build_validation_result(
-                False, "Date", "Sorry, provided date is incorrectly formatted"
+                False, "Date", "Sorry, provided date is incorrectly formatted."
             )
         if parse(date) < datetime.today():
             return build_validation_result(
-                False, "Date", "That date is in the past. Provide future date"
+                False, "Date", "That date is in the past. Provide future date."
             )
     if cultural_event_index:
         try:
@@ -102,7 +102,7 @@ def handler(event: dict, context: object) -> dict:
                 "Fulfilled",
                 {
                     "contentType": "PlainText",
-                    "content": f"sorry, couldn't add cultural event ({cultural_event_json}) to calendar.",
+                    "content": f"sorry, couldn't add cultural event to calendar. Make sure that you are using correct index.",
                 },
             )
         cultural_event = json.loads(cultural_event_json)
