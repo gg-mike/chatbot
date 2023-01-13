@@ -51,7 +51,7 @@ def handler(event: dict, context: object) -> dict:
             "Fulfilled",
             {
                 "contentType": "CustomPayload",
-                "content": {"type": "event", "objects": dumps(objects)},
+                "content": dumps({"type": "event", "objects": objects}),
             },
         )
     except Exception as err:
