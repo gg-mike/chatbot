@@ -41,10 +41,18 @@ def handler(event: dict, context: object) -> dict:
         if is_current_events:
             session_attributes["upcomingEvent"] = dumps(list(items.values())[0])
 
+        objects = []
+        for k, v in items.items():
+            v["name"] = k
+            objects.append(v)
+
         return close(
             session_attributes,
             "Fulfilled",
-            {"contentType": "CustomPayload", "content": dumps(items)},
+            {
+                "contentType": "CustomPayload",
+                "content": {"type": "event", "objects": dumps(objects)},
+            },
         )
     except Exception as err:
         return return_unexpected_failure(session_attributes, f"Failed to get events ({err})")
