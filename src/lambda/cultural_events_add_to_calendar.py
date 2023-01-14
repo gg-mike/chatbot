@@ -71,7 +71,8 @@ def handler(event: dict, context: object) -> dict:
 
     if source == "DialogCodeHook":
         # Validate any slots which have been specified.  If any are invalid, re-elicit for their value
-        validation_result = validate_user_input(event["currentIntent"]["slots"])
+        validation_result = validate_user_input(
+            event["currentIntent"]["slots"])
         if not validation_result["isValid"]:
             slots = event["currentIntent"]["slots"]
             slots[validation_result["violatedSlot"]] = None
@@ -93,7 +94,8 @@ def handler(event: dict, context: object) -> dict:
         logger.debug(f"session attributes {session_attributes}")
 
         cultural_event_index = int(slots.get("CulturalEventIndex", None))
-        cultural_event_json = session_attributes.get(f"cultural_event_{cultural_event_index}", None)
+        cultural_event_json = session_attributes.get(
+            f"cultural_event_{cultural_event_index}", None)
         if not cultural_event_json:
             return close(
                 session_attributes,
@@ -105,7 +107,8 @@ def handler(event: dict, context: object) -> dict:
             )
         cultural_event = json.loads(cultural_event_json)
 
-        logger.debug(f"cultural event with index ({cultural_event_index}): {cultural_event}")
+        logger.debug(
+            f"cultural event with index ({cultural_event_index}): {cultural_event}")
 
         try:
             body = {
@@ -135,13 +138,16 @@ def handler(event: dict, context: object) -> dict:
             return close(
                 session_attributes,
                 "Fulfilled",
-                {
-                    "contentType": "PlainText",
-                    "content": f'''Created event "{cultural_event.get("event_name","Untitled")}"''',
-                },
+                {"contentType": "CustomPayload", "content": json.dumps({
+                    "type": "culturalEvent",
+                    "objects": json.dumps(cultural_event),
+                    "response": f'''Created event "{cultural_event.get("event_name","Untitled")}"'''
+                })
+                }
             )
         except Exception as err:
-            logger.debug(f"Error while adding cultural event to calendar: {err}")
+            logger.debug(
+                f"Error while adding cultural event to calendar: {err}")
             return return_unexpected_failure(
                 session_attributes,
                 f'''Failed to add event "{cultural_event.get("event_name","Untitled")}"''',

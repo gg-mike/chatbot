@@ -109,16 +109,13 @@ def handler(event: dict, context: object) -> dict:
         if items:
             for count, item in enumerate(items):
                 session_attributes[f"cultural_event_{count+1}"] = json.dumps(item)
-                response_message += f"{count+1}) Event name: {item.get('event_name','no title')}\n "
-                if item.get("time_start", None):
-                    response_message += f"starts at {item.get('date_start','no date specified')} {item['time_start']}\n "
-                if item.get("time_end", None):
+                response_message += f"{count+1}) Event name: {item.get('event_name','Untitled')} "
+                if item.get("date_start", None):
+                    response_message += f"starts at: {item.get('date_start','no date specified')} {item.get('time_start', '')}) "
+                if item.get("date_end", None):
                     response_message += (
-                        f"ends at {item.get('date_end','no date specified')} {item['time_end']}\n "
+                        f"ends at: {item.get('date_end','no date specified')} {item.get('time_end','')}\n"
                     )
-                if item.get("link", None):
-                    response_message += f"read more: {item['link']}\n "
-
         else:
             response_message = f"There are no ongoing events in {city}"
             if date:
@@ -128,7 +125,12 @@ def handler(event: dict, context: object) -> dict:
         logger.debug(f"response message before close {response_message}")
         logger.debug(f"session attributes {session_attributes}")
         return close(
-            session_attributes,
-            "Fulfilled",
-            {"contentType": "PlainText", "content": response_message},
-        )
+                session_attributes,
+                "Fulfilled",
+                {"contentType": "CustomPayload", "content": json.dumps({
+                    "type": "culturalEvent",
+                    "header": f"List of cultural events in {city}",
+                    "objects": json.dumps(items),
+                    "response": response_message
+                })
+                })
