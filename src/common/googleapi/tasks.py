@@ -1,6 +1,37 @@
+from json import dumps, JSONEncoder
+
 MAX_TASK_COUNT = 10
 CHATBOT_TASKS_LIST = "Chatbot"
 TIME_STRING = "T00:00:00.000Z"
+
+
+class Task:
+    def __init__(self, title: str, description: str, deadline: str):
+        self.title: str = title
+        self.description: str = description
+        self.deadline: str = deadline
+
+    def __dict__(self):
+        return {
+            "title": self.title,
+            "description": self.description,
+            "deadline": self.deadline,
+        }
+
+    class CustomEncoder(JSONEncoder):
+        def default(self, o):
+            return o.__dict__()
+
+
+def prepare_json_message(header: str, task_list: [Task]):
+    return {
+        "contentType": "CustomPayload",
+        "content": dumps({
+            "type": "task",
+            "header": header,
+            "objects": task_list
+        }, cls=Task.CustomEncoder)
+    }
 
 
 def get_item_list(getter) -> []:
