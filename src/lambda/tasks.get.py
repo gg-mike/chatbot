@@ -39,10 +39,7 @@ def handler(event, context):
         return close(
             session_attributes,
             "Fulfilled",
-            {
-                "contentType": "PlainText",
-                "content": prepare_response(response, slots["Deadline"]),
-            },
+            prepare_response(response, slots["Deadline"])
         )
     except Exception as err:
         return return_unexpected_failure(session_attributes, "Failed to get task list")
