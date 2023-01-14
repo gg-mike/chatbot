@@ -1,3 +1,5 @@
+from json import dumps
+
 from googleapi import tasks
 from lex import close, return_unexpected_failure
 from setup_handler import google_api_handler as setup
@@ -6,14 +8,32 @@ from utility import create_debug_logger, get_slots
 logger = create_debug_logger()
 
 
+def prepare_task(task):
+    date = task["due"].split('T')[0]
+    return {
+        "title": task["title"],
+        "description": task["notes"],
+        "deadline": date,
+    }
+
+
 def prepare_response(google_response, deadline):
     if len(google_response) == 0:
-        return f"No tasks found with deadline {deadline}"
+        return {
+            "contentType": "PlainText",
+            "content": f"No tasks found with deadline: {deadline}",
+        }
     else:
-        task_name_list = [task["title"] for task in google_response]
-        response = f"Task list with deadline {deadline}: " + ", ".join(task_name_list)
-        logger.debug(f"{response=}")
-        return response
+        task_list = [prepare_task(task) for task in google_response]
+        logger.debug(f"{task_list=}")
+        return {
+            "contentType": "CustomPayload",
+            "content": dumps({
+                "type": "task",
+                "header": f"Task list with deadline: {deadline}",
+                "objects": task_list
+            })
+        }
 
 
 def handler(event, context):
