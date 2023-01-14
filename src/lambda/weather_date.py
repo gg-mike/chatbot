@@ -1,6 +1,7 @@
 from datetime import datetime
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
+import json
 
 from lex import (
     elicit_slot,
@@ -50,7 +51,8 @@ def handler(event: dict, context: object) -> dict:
     """Route the incoming request based on intent. The JSON body of the request is provided in the event slot."""
 
     logger.debug(f"event.bot.name={event['bot']['name']}")
-    logger.debug(f"userId={event['userId']}, intentName={event['currentIntent']['name']}")
+    logger.debug(
+        f"userId={event['userId']}, intentName={event['currentIntent']['name']}")
 
     source = event["invocationSource"]
     slots = event["currentIntent"]["slots"]
@@ -58,7 +60,8 @@ def handler(event: dict, context: object) -> dict:
 
     if source == "DialogCodeHook":
         # Validate any slots which have been specified.  If any are invalid, re-elicit for their value
-        validation_result = validate_user_input(event["currentIntent"]["slots"])
+        validation_result = validate_user_input(
+            event["currentIntent"]["slots"])
         if not validation_result["isValid"]:
             slots = event["currentIntent"]["slots"]
             slots[validation_result["violatedSlot"]] = None
@@ -82,12 +85,25 @@ def handler(event: dict, context: object) -> dict:
             weather = open_weather_map_data["weather"][0]["main"]
             temp = open_weather_map_data["main"]["temp"]
             pressure = open_weather_map_data["main"]["pressure"]
-            response = f"Overall weather in {city} for {date}: {weather}, temperature: {temp} degrees Celsius, pressure: {pressure}hPa"
+            objects = {"date": date,
+                       "city": city,
+                       "overall": weather,
+                       "temperature": temp,
+                       "pressure": pressure
+                       }
+            response = f"Overall weather in {city} for {date}: {weather}, temperature: {temp} degrees Celsius, pressure: {pressure} hPa"
+            logger.debug(f"response: {response}")
+            logger.debug(f"objects: {objects}")
             return close(
                 session_attributes,
                 "Fulfilled",
-                {"contentType": "PlainText", "content": response},
-            )
+                {"contentType": "CustomPayload", "content": json.dumps({
+                    "type": "weather",
+                    "header": f"Weather forecast for {date} in {city}",
+                    "objects": objects,
+                    "response": response
+                })
+                })
         else:
             return return_unexpected_failure(
                 session_attributes, "Something went wrong, try again later."
