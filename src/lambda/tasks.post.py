@@ -1,3 +1,5 @@
+from json import dumps
+
 from googleapi import tasks
 from lex import close, return_unexpected_failure
 from setup_handler import google_api_handler as setup
@@ -25,8 +27,18 @@ def handler(event, context):
             session_attributes,
             "Fulfilled",
             {
-                "contentType": "PlainText",
-                "content": f"Created task {slots['Title']} with deadline {slots['Deadline']} and description {slots['Description']}",
+                "contentType": "CustomPayload",
+                "content": dumps({
+                    "type": "task",
+                    "header": "Created task",
+                    "objects": [
+                        {
+                            "title": slots["Title"],
+                            "description": slots["Description"],
+                            "deadline": slots['Deadline'],
+                        }
+                    ]
+                })
             },
         )
     except Exception as err:
