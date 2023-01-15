@@ -100,7 +100,7 @@ def handler(event: dict, context: object) -> dict:
                 {"contentType": "CustomPayload", "content": json.dumps({
                     "type": "weather",
                     "header": f"Weather forecast for {date} in {city}",
-                    "objects": objects,
+                    "objects": [objects],
                     "response": response
                 })
                 })
