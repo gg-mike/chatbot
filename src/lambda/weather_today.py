@@ -74,7 +74,7 @@ def handler(event: dict, context: object) -> dict:
         return delegate(session_attributes, slots)
 
     if source == "FulfillmentCodeHook":
-        city = slots.get("City", None)
+        city = slots.get("City", session_attributes.get("defaultLocation", None))
         open_weather_map_data = weather_handler.get_weather_today(city)
 
         if open_weather_map_data:

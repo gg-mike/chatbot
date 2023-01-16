@@ -86,7 +86,8 @@ def handler(event: dict, context: object) -> dict:
     if source == "FulfillmentCodeHook":
 
         date = slots.get("Date", None)
-        city = slots.get("City", None)
+        city = slots.get("City", session_attributes.get("defaultLocation", None))
+            
         response_message = ""
 
         response = events_table.query(KeyConditionExpression=Key("location").eq((city)))
