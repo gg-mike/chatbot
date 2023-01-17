@@ -1,6 +1,6 @@
 from boto3.dynamodb.conditions import Key
 import boto3
-from datetime import datetime
+from datetime import datetime, date, time
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
 import json
@@ -117,8 +117,8 @@ def handler(event: dict, context: object) -> dict:
                     response_message += (
                         f"ends at: {item.get('date_end','no date specified')} {item.get('time_end','')}\n"
                     )
-                item['datetime_start'] = events.get_datetime(datetime(item['date_start']), datetime(item['time_start']))
-                item['datetime_end'] = events.get_datetime(datetime(item['date_end']), datetime(item['time_end']))
+                item['datetime_start'] = events.get_datetime(date(item['date_start']), time(item['time_start']))
+                item['datetime_end'] = events.get_datetime(date(item['date_end']), time(item['time_end']))
         else:
             response_message = f"There are no ongoing events in {city}"
             if date:
