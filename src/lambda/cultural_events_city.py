@@ -4,6 +4,7 @@ from datetime import datetime
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
 import json
+from pytz import timezone
 from googleapi import calendars, events
 from setup_handler import google_api_handler as setup
 from lex import (
@@ -117,8 +118,11 @@ def handler(event: dict, context: object) -> dict:
                     response_message += (
                         f"ends at: {item.get('date_end','no date specified')} {item.get('time_end','')}\n"
                     )
-                item['datetime_start'] = datetime.strptime(item['date_start']+" "+item['time_start'], '%Y-%m-%d %H:%M:%S')
-                item['datetime_end'] = datetime.strptime(item['date_end']+" "+item['time_end'], '%Y-%m-%d %H:%M:%S')
+                datetime_start = datetime.strptime(item['date_start']+" "+item['time_start'], '%Y-%m-%d %H:%M:%S')
+                datetime_end = datetime.strptime(item['date_end']+" "+item['time_end'], '%Y-%m-%d %H:%M:%S')
+                item['datetime_start'] = str(timezone("Europe/Warsaw").localize(datetime_start)).replace(" ", "T")
+                item['datetime_end'] = str(timezone("Europe/Warsaw").localize(datetime_end)).replace(" ", "T")
+
 
         else:
             response_message = f"There are no ongoing events in {city}"
