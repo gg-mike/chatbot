@@ -117,8 +117,8 @@ def handler(event: dict, context: object) -> dict:
                     response_message += (
                         f"ends at: {item.get('date_end','no date specified')} {item.get('time_end','')}\n"
                     )
-                item['datetime_start'] = events.get_datetime(item['date_start'], item['time_start'])
-                item['datetime_end'] = events.get_datetime(item['date_end'], item['time_end'])
+                item['datetime_start'] = events.get_datetime(datetime(item['date_start']), datetime(item['time_start']))
+                item['datetime_end'] = events.get_datetime(datetime(item['date_end']), datetime(item['time_end']))
         else:
             response_message = f"There are no ongoing events in {city}"
             if date:
