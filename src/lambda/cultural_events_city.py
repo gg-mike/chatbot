@@ -138,7 +138,7 @@ def handler(event: dict, context: object) -> dict:
                 {"contentType": "CustomPayload", "content": json.dumps({
                     "type": "culturalEvent",
                     "header": f"List of cultural events in {city}",
-                    "objects": json.dumps(items),
+                    "objects": items,
                     "response": response_message
                 })
                 })
