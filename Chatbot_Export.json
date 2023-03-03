@@ -1,0 +1,589 @@
+{
+  "metadata": {
+    "schemaVersion": "1.0",
+    "importType": "LEX",
+    "importFormat": "JSON"
+  },
+  "resource": {
+    "name": "Chatbot",
+    "version": "7",
+    "intents": [
+      {
+        "rejectionStatement": {
+          "messages": [
+            {
+              "contentType": "PlainText",
+              "content": "Okay, event creation cancelled"
+            },
+            {
+              "contentType": "PlainText",
+              "content": "Okay, adding the event has been cancelled"
+            }
+          ]
+        },
+        "name": "CreateEvent",
+        "version": "6",
+        "fulfillmentActivity": {
+          "codeHook": {
+            "uri": "arn:aws:lambda:eu-west-2:194814423817:function:chatbot-EventPostFunc-P8Yicz1PBTcz",
+            "messageVersion": "1.0"
+          },
+          "type": "CodeHook"
+        },
+        "sampleUtterances": [
+          "Create event at the location {Location}",
+          "Create event {EventName} starting {StartDate} and ending {EndDate}",
+          "Create event {EventName} what starts {StartDate} at {StartTime} and ends {EndDate} at {EndTime}",
+          "Add event to my calendar",
+          "Create event"
+        ],
+        "slots": [
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.DATE",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Required",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "When does the event end (date)?"
+                }
+              ],
+              "maxAttempts": 2
+            },
+            "priority": 4,
+            "name": "EndDate"
+          },
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.TIME",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Optional",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "When does the event end (time)?"
+                }
+              ],
+              "maxAttempts": 2
+            },
+            "priority": 6,
+            "name": "EndTime"
+          },
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.AlphaNumeric",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Required",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "What is the event's name?"
+                }
+              ],
+              "maxAttempts": 2
+            },
+            "priority": 1,
+            "name": "EventName"
+          },
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.City",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Optional",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "What is the event's location?"
+                }
+              ],
+              "maxAttempts": 2
+            },
+            "priority": 7,
+            "name": "Location"
+          },
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.DATE",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Required",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "When does the event start (date)?"
+                }
+              ],
+              "maxAttempts": 2
+            },
+            "priority": 2,
+            "name": "StartDate"
+          },
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.TIME",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Optional",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "When does the event start (time)?"
+                }
+              ],
+              "maxAttempts": 2
+            },
+            "priority": 5,
+            "name": "StartTime"
+          }
+        ],
+        "confirmationPrompt": {
+          "messages": [
+            {
+              "contentType": "PlainText",
+              "content": "Are you sure you want to add event \"{EventName}\" ({StartDate} - {EndDate}) to your calendar?"
+            },
+            {
+              "contentType": "PlainText",
+              "content": "Do you want to have event {EventName} added to your calendar?"
+            }
+          ],
+          "maxAttempts": 3
+        },
+        "conclusionStatement": {
+          "messages": [
+            {
+              "groupNumber": 1,
+              "contentType": "PlainText",
+              "content": "Event \"{EventName}\" has been added"
+            },
+            {
+              "groupNumber": 1,
+              "contentType": "PlainText",
+              "content": "Event \"{EventName}\" added to your calendar"
+            }
+          ]
+        }
+      },
+      {
+        "name": "GetEvents",
+        "version": "8",
+        "fulfillmentActivity": {
+          "codeHook": {
+            "uri": "arn:aws:lambda:eu-west-2:194814423817:function:chatbot-EventGetFunc-nAjsWsi81hWy",
+            "messageVersion": "1.0"
+          },
+          "type": "CodeHook"
+        },
+        "sampleUtterances": [
+          "Show events from {StartDate} to {EndDate}",
+          "Show me upcomnning events",
+          "What events do I have from {StartDate} to {EndDate} ?",
+          "What are the upcomming events?"
+        ],
+        "slots": [
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.DATE",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Optional",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "To what date?"
+                }
+              ],
+              "maxAttempts": 2
+            },
+            "priority": 2,
+            "name": "EndDate"
+          },
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.DATE",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Optional",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "From what date?"
+                }
+              ],
+              "maxAttempts": 2
+            },
+            "priority": 1,
+            "name": "StartDate"
+          }
+        ]
+      },
+      {
+        "name": "GetCulturalEventsCity",
+        "version": "6",
+        "fulfillmentActivity": {
+          "codeHook": {
+            "uri": "arn:aws:lambda:eu-west-2:194814423817:function:chatbot-CulturalEventsCityFunc-cOS59PJ08T2m",
+            "messageVersion": "1.0"
+          },
+          "type": "CodeHook"
+        },
+        "sampleUtterances": [
+          "What's happening in {City} on {Date} ?",
+          "What's happening in {City} ?",
+          "What's happening on {Date} ?"
+        ],
+        "slots": [
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.City",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Required",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "In what city?"
+                }
+              ],
+              "maxAttempts": 2
+            },
+            "priority": 2,
+            "name": "City"
+          },
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.DATE",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Optional",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "On what date?"
+                }
+              ],
+              "maxAttempts": 2
+            },
+            "priority": 1,
+            "name": "Date"
+          }
+        ],
+        "dialogCodeHook": {
+          "uri": "arn:aws:lambda:eu-west-2:194814423817:function:chatbot-CulturalEventsCityFunc-cOS59PJ08T2m",
+          "messageVersion": "1.0"
+        }
+      },
+      {
+        "name": "GetWeatherForEvent",
+        "version": "2",
+        "fulfillmentActivity": {
+          "codeHook": {
+            "uri": "arn:aws:lambda:eu-west-2:194814423817:function:chatbot-GetWeatherForEventFunc-Kns8DlR1fO5U",
+            "messageVersion": "1.0"
+          },
+          "type": "CodeHook"
+        },
+        "sampleUtterances": [
+          "What is the weather for the upcoming event?"
+        ],
+        "slots": []
+      },
+      {
+        "name": "GetTasks",
+        "version": "7",
+        "fulfillmentActivity": {
+          "codeHook": {
+            "uri": "arn:aws:lambda:eu-west-2:194814423817:function:chatbot-TaskGetFunc-7RzaVdYC97VR",
+            "messageVersion": "1.0"
+          },
+          "type": "CodeHook"
+        },
+        "sampleUtterances": [
+          "What tasks do I have ?",
+          "Get tasks",
+          "My tasks"
+        ],
+        "slots": [
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.DATE",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Required",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "What is the tasks deadline?"
+                }
+              ],
+              "maxAttempts": 2
+            },
+            "priority": 1,
+            "name": "Deadline"
+          }
+        ]
+      },
+      {
+        "rejectionStatement": {
+          "messages": [
+            {
+              "contentType": "PlainText",
+              "content": "Ok, task creation canceled"
+            }
+          ]
+        },
+        "name": "CreateTask",
+        "version": "29",
+        "fulfillmentActivity": {
+          "codeHook": {
+            "uri": "arn:aws:lambda:eu-west-2:194814423817:function:chatbot-TaskPostFunc-h1CVavzM6gKQ",
+            "messageVersion": "1.0"
+          },
+          "type": "CodeHook"
+        },
+        "sampleUtterances": [
+          "New task {Title} with deadline {Deadline} with description {Description}",
+          "Create task {Title} with deadline {Deadline} with description {Description}",
+          "Create task",
+          "New task"
+        ],
+        "slots": [
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.DATE",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Required",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "What is the task deadline?"
+                }
+              ],
+              "maxAttempts": 2
+            },
+            "priority": 2,
+            "name": "Deadline"
+          },
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.AlphaNumeric",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Required",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "What is the task description?"
+                }
+              ],
+              "maxAttempts": 2
+            },
+            "priority": 3,
+            "name": "Description"
+          },
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.AlphaNumeric",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Required",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "What is the task title?"
+                }
+              ],
+              "responseCard": "{\"version\":1,\"contentType\":\"application/vnd.amazonaws.card.generic\"}",
+              "maxAttempts": 5
+            },
+            "priority": 1,
+            "defaultValueSpec": {
+              "defaultValueList": []
+            },
+            "name": "Title"
+          }
+        ],
+        "confirmationPrompt": {
+          "messages": [
+            {
+              "contentType": "PlainText",
+              "content": "Do you want to create task with title: {Title}, deadline: {Deadline} and description: {Description}?"
+            }
+          ],
+          "maxAttempts": 3
+        }
+      },
+      {
+        "name": "GetWeatherNow",
+        "version": "7",
+        "fulfillmentActivity": {
+          "codeHook": {
+            "uri": "arn:aws:lambda:eu-west-2:194814423817:function:chatbot-WeatherTodayFunc-OJfnme0veiwy",
+            "messageVersion": "1.0"
+          },
+          "type": "CodeHook"
+        },
+        "sampleUtterances": [
+          "What's the weather like today?",
+          "What's the weather today?",
+          "What's the weather today in {City} ?",
+          "What's the weather like today in {City} ?"
+        ],
+        "slots": [
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.City",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Required",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "In what city?"
+                },
+                {
+                  "contentType": "PlainText",
+                  "content": "Please, provide city"
+                }
+              ],
+              "responseCard": "{\"version\":1,\"contentType\":\"application/vnd.amazonaws.card.generic\"}",
+              "maxAttempts": 2
+            },
+            "priority": 1,
+            "defaultValueSpec": {
+              "defaultValueList": []
+            },
+            "name": "City"
+          }
+        ],
+        "dialogCodeHook": {
+          "uri": "arn:aws:lambda:eu-west-2:194814423817:function:chatbot-WeatherTodayFunc-OJfnme0veiwy",
+          "messageVersion": "1.0"
+        }
+      },
+      {
+        "name": "AddCulturalEventToCalendar",
+        "version": "4",
+        "fulfillmentActivity": {
+          "codeHook": {
+            "uri": "arn:aws:lambda:eu-west-2:194814423817:function:chatbot-CulturalEventsAddToCalendarFunc-BppRIzcEshy8",
+            "messageVersion": "1.0"
+          },
+          "type": "CodeHook"
+        },
+        "sampleUtterances": [
+          "Add {CulturalEventIndex} to calendar"
+        ],
+        "slots": [
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.NUMBER",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Required",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "Add to calendar? (choose number)"
+                }
+              ],
+              "maxAttempts": 2
+            },
+            "priority": 1,
+            "name": "CulturalEventIndex"
+          }
+        ],
+        "dialogCodeHook": {
+          "uri": "arn:aws:lambda:eu-west-2:194814423817:function:chatbot-CulturalEventsAddToCalendarFunc-BppRIzcEshy8",
+          "messageVersion": "1.0"
+        }
+      },
+      {
+        "name": "GetWeatherDate",
+        "version": "6",
+        "fulfillmentActivity": {
+          "codeHook": {
+            "uri": "arn:aws:lambda:eu-west-2:194814423817:function:chatbot-WeatherDateFunc-o9HTCsaR7G3f",
+            "messageVersion": "1.0"
+          },
+          "type": "CodeHook"
+        },
+        "sampleUtterances": [
+          "What's the weather like on {Date} ?",
+          "What's the weather like in {City} ?",
+          "What's the weather like in {City} on {Date} ?",
+          "What's the weather like?"
+        ],
+        "slots": [
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.City",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Required",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "In what city?"
+                }
+              ],
+              "maxAttempts": 2
+            },
+            "priority": 1,
+            "name": "City"
+          },
+          {
+            "sampleUtterances": [],
+            "slotType": "AMAZON.DATE",
+            "obfuscationSetting": "NONE",
+            "slotConstraint": "Required",
+            "valueElicitationPrompt": {
+              "messages": [
+                {
+                  "contentType": "PlainText",
+                  "content": "On what date?"
+                }
+              ],
+              "maxAttempts": 2
+            },
+            "priority": 2,
+            "name": "Date"
+          }
+        ],
+        "dialogCodeHook": {
+          "uri": "arn:aws:lambda:eu-west-2:194814423817:function:chatbot-WeatherDateFunc-o9HTCsaR7G3f",
+          "messageVersion": "1.0"
+        }
+      }
+    ],
+    "voiceId": "Brian",
+    "childDirected": false,
+    "locale": "en-GB",
+    "idleSessionTTLInSeconds": 300,
+    "clarificationPrompt": {
+      "messages": [
+        {
+          "contentType": "PlainText",
+          "content": "Sorry, can you please repeat that?"
+        }
+      ],
+      "maxAttempts": 5
+    },
+    "abortStatement": {
+      "messages": [
+        {
+          "contentType": "PlainText",
+          "content": "Sorry, I could not understand. Goodbye."
+        }
+      ]
+    },
+    "detectSentiment": false,
+    "enableModelImprovements": true
+  }
+}
